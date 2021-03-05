@@ -8,12 +8,30 @@ else:
 # This class defines a complete listener for a parse tree produced by GrammarParser.
 class GrammarListener(ParseTreeListener):
 
+    # Enter a parse tree produced by GrammarParser#prog.
+    def enterProg(self, ctx:GrammarParser.ProgContext):
+        pass
+
+    # Exit a parse tree produced by GrammarParser#prog.
+    def exitProg(self, ctx:GrammarParser.ProgContext):
+        pass
+
+
     # Enter a parse tree produced by GrammarParser#palavra_chave.
     def enterPalavra_chave(self, ctx:GrammarParser.Palavra_chaveContext):
         pass
 
     # Exit a parse tree produced by GrammarParser#palavra_chave.
     def exitPalavra_chave(self, ctx:GrammarParser.Palavra_chaveContext):
+        pass
+
+
+    # Enter a parse tree produced by GrammarParser#ident.
+    def enterIdent(self, ctx:GrammarParser.IdentContext):
+        pass
+
+    # Exit a parse tree produced by GrammarParser#ident.
+    def exitIdent(self, ctx:GrammarParser.IdentContext):
         pass
 
 

@@ -6,8 +6,10 @@ import sys
 
 
 class GrammarPrintListener(GrammarListener):
-    def enterEveryRule(self, ctx):
-        print(f"<hi, hi>")
+    def enterPalavra_chave(self, ctx):
+        print(f"<{ctx.getText()},{ctx.getText()}>")
+    def enterIdent(self, ctx):
+        print(f"<{ctx.getText()},IDENT>")
 
 
 def main(argv):
@@ -15,7 +17,7 @@ def main(argv):
     lexer = GrammarLexer(input_stream)
     stream = CommonTokenStream(lexer)
     parser = GrammarParser(stream)
-    tree = parser.palavra_chave()
+    tree = parser.prog()
     printer = GrammarPrintListener()
     walker = ParseTreeWalker()
     walker.walk(printer, tree)
