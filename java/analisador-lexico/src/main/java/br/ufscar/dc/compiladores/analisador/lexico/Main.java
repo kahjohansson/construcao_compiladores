@@ -12,15 +12,22 @@ public class Main {
         try {
             CharStream cs = CharStreams.fromFileName(args[0]);
             Gramatica gram = new Gramatica(cs);
-            ArrayList<String> labels = new ArrayList<String>(Arrays.asList("PALAVRA_CHAVE", "SIMBOLO", "OPERADOR_LOG_PALAVRA", "OPERADOR_MAT", "OPERADOR_LOG", "OPERADOR_OUTROS"));
+            ArrayList<String> labels = new ArrayList<String>(Arrays.asList("PALAVRA_CHAVE", "SIMBOLO", 
+            "OPERADOR_LOG_PALAVRA", "OPERADOR_MAT", "OPERADOR_LOG", "OPERADOR_OUTROS"));
 
             Token t = null;
+            int line_count = 0;
             while ((t = gram.nextToken()).getType() != Token.EOF) {
                 String tipo = Gramatica.VOCABULARY.getDisplayName(t.getType());
                 String valor = t.getText();
-                
+               
                 if (labels.contains(tipo)){
                     System.out.println("<'"+ valor + "','" + valor +"'>");
+                } else if(tipo == "ERRO_GERAL") {
+                    System.out.println("Linha " + String.valueOf(line_count) + ": " + valor + " - simbolo nao identificado");
+                    break;
+//                } else if(tipo == "QUEBRA_LINHA") {
+//                    line_count = line_count+1;
                 } else{
                     System.out.println("<'"+ valor + "'," + tipo +">");
                 }
