@@ -12,7 +12,7 @@ public class Main {
         try {
             CharStream cs = CharStreams.fromFileName(args[0]);
             Gramatica gram = new Gramatica(cs);
-            ArrayList<String> labels = new ArrayList<String>(Arrays.asList("PALAVRA_CHAVE", "SIMBOLO"));
+            ArrayList<String> labels = new ArrayList<String>(Arrays.asList("PALAVRA_CHAVE", "SIMBOLO", "OPERADOR_LOG_PALAVRA", "OPERADOR_MAT", "OPERADOR_LOG", "OPERADOR_OUTROS"));
 
             Token t = null;
             while ((t = gram.nextToken()).getType() != Token.EOF) {
