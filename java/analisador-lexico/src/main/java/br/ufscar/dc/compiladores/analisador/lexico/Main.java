@@ -1,6 +1,8 @@
 package br.ufscar.dc.compiladores.analisador.lexico;
 
 import java.io.IOException;
+import java.io.FileWriter;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import org.antlr.v4.runtime.CharStream;
@@ -9,7 +11,13 @@ import org.antlr.v4.runtime.Token;
 
 public class Main {
     public static void main(String args[]) {
+        
+        
         try {
+            
+            File myObj = new File(args[1]); //cria arquivo, se não existir
+            FileWriter writer = new FileWriter(args[1]); //writer do arquivo
+            
             CharStream cs = CharStreams.fromFileName(args[0]);
             Gramatica gram = new Gramatica(cs);
             ArrayList<String> labels = new ArrayList<String>(Arrays.asList("PALAVRA_CHAVE", "SIMBOLO", 
@@ -22,14 +30,16 @@ public class Main {
                 String valor = t.getText();
                
                 if (labels.contains(tipo)){
-                    System.out.println("<'"+ valor + "','" + valor +"'>");
+                    writer.write("<'"+ valor + "','" + valor +"'>\n");
                 } else if(tipo == "ERRO_GERAL") {
-                    System.out.println("Linha " + t.getLine() + ": " + valor + " - simbolo nao identificado");
+                    writer.write("Linha " + t.getLine() + ": " + valor + " - simbolo nao identificado\n");
                     break;
                 } else{
-                    System.out.println("<'"+ valor + "'," + tipo +">");
+                    writer.write("<'"+ valor + "'," + tipo +">\n");
                 }
             }
+            
+            writer.close();
         } catch (IOException ex) {
         }
     }
