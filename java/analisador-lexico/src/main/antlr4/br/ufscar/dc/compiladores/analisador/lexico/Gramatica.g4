@@ -33,4 +33,7 @@ NUMERO: '0'..'9';
 fragment
 SUBLINHA: '_';
 
+
+COMENTARIO_NAO_FECHADO: '{' ~('}')* '\n';
+CADEIA_NAO_FECHADA: '"' ~('"')* '\n';
 ERRO_GERAL: .;

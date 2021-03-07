@@ -31,6 +31,12 @@ public class Main {
                
                 if (labels.contains(tipo)){
                     writer.write("<'"+ valor + "','" + valor +"'>\n");
+                } else if(tipo == "COMENTARIO_NAO_FECHADO") {
+                    writer.write("Linha " + t.getLine() + ": comentario nao fechado\n");
+                    break;
+                } else if(tipo == "CADEIA_NAO_FECHADA") {
+                    writer.write("Linha " + t.getLine() + ": cadeia literal nao fechada\n");
+                    break;
                 } else if(tipo == "ERRO_GERAL") {
                     writer.write("Linha " + t.getLine() + ": " + valor + " - simbolo nao identificado\n");
                     break;
