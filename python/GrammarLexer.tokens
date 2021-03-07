@@ -1,9 +1,0 @@
-ALGORITMO=1
-SAIDA=2
-DECIDE=3
-IDENT=4
-NUM_REAL=5
-WHITE_SPACE=6
-'algoritmo'=1
-'saida'=2
-'decide'=3
