@@ -24,10 +24,8 @@ public class Main {
                 if (labels.contains(tipo)){
                     System.out.println("<'"+ valor + "','" + valor +"'>");
                 } else if(tipo == "ERRO_GERAL") {
-                    System.out.println("Linha " + String.valueOf(line_count) + ": " + valor + " - simbolo nao identificado");
+                    System.out.println("Linha " + t.getLine() + ": " + valor + " - simbolo nao identificado");
                     break;
-//                } else if(tipo == "QUEBRA_LINHA") {
-//                    line_count = line_count+1;
                 } else{
                     System.out.println("<'"+ valor + "'," + tipo +">");
                 }

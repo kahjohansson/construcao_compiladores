@@ -6,7 +6,7 @@ PALAVRA_CHAVE: 'algoritmo' | 'declare' | 'fim_algoritmo' | 'leia' | 'escreva' |
                 'fim_para' | 'ate' | 'faca' | 'enquanto' | 'fim_enquanto' |
                 'registro' | 'fim_registro' | 'tipo' | 'procedimento' |
                 'fim_procedimento' | 'var' | 'funcao' | 'fim_funcao' | 
-                'retorne' | 'constante';
+                'retorne' | 'constante'| 'falso' | 'verdadeiro';
 
 OPERADOR_LOG_PALAVRA: 'e' | 'ou' | 'nao';
 
@@ -25,6 +25,7 @@ OPERADOR_LOG: '<>' | '=' | '<' | '>' | '>=';
 COMENTARIO: '{' ~('\n'|'}')* '}' -> skip;
 ESPACO: (' ' | '\n' | '\r' | '\t' ) -> skip;
 
+
 fragment
 LETRA: 'a'..'z' | 'A'..'Z';
 fragment
@@ -32,4 +33,4 @@ NUMERO: '0'..'9';
 fragment
 SUBLINHA: '_';
 
-ERRO_GERAL: '.'*?;
+ERRO_GERAL: .;
