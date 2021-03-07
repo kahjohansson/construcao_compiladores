@@ -1,5 +1,0 @@
-funciona desgraca
-decide
-saida
-algoritmo algoritmo oi
-9.9
