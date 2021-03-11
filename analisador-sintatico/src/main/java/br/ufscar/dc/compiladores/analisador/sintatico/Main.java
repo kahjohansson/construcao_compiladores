@@ -9,6 +9,7 @@ import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.Token;
+import org.antlr.v4.runtime.RecognitionException;
 
 /*
 Classe principal e única do analisador léxico
@@ -27,6 +28,8 @@ public class Main {
                     "PALAVRA_CHAVE", "SIMBOLO", "OPERADOR_LOG_PALAVRA", 
                     "OPERADOR_MAT", "OPERADOR_LOG", "OPERADOR_OUTROS")); //listagem dos padrões com token do formato <lexema,lexema>
 
+            boolean error = false;
+            
             Token t = null; //instancia variável do token
             while ((t = lexer.nextToken()).getType() != Token.EOF) { //laço que itera os tokens até o fim do arquivo
                 String tipo = GramaticaLexer.VOCABULARY.getDisplayName(t.getType()); //recupera tipo do token
@@ -34,27 +37,42 @@ public class Main {
                
                 if("COMENTARIO_NAO_FECHADO".equals(tipo)) {
                     pw.println("Linha " + t.getLine() + ": comentario nao fechado"); //saída para erro de comentário não fechado na mesma linha
+                    pw.println("Fim da compilacao");
+                    error = true;
                     break;
                 } else if("CADEIA_NAO_FECHADA".equals(tipo)) {
                     pw.println("Linha " + t.getLine() + ": cadeia literal nao fechada"); //saída para erro de cadeia não fechada na mesma linha
+                    pw.println("Fim da compilacao");
+                    error = true;
                     break;
                 } else if("ERRO_GERAL".equals(tipo)) {
                     pw.println("Linha " + t.getLine() + ": " + valor + " - simbolo nao identificado"); //saída para símbolos que não fazem parte da gramática LA
+                    pw.println("Fim da compilacao");
+                    error = true;
                     break;
                 }
             }
      
-            CharStream cs1 = CharStreams.fromFileName(args[0]);
-            GramaticaLexer lexer1 = new GramaticaLexer(cs1);
-            CommonTokenStream tokens = new CommonTokenStream(lexer1);
-            GramaticaParser parser = new GramaticaParser(tokens);
+            if (! error){
             
-            MyCustomErrorListener mcel = new MyCustomErrorListener(pw);
-            parser.addErrorListener(mcel);
-            
-            parser.programa();
+                CharStream cs1 = CharStreams.fromFileName(args[0]);
+                GramaticaLexer lexer1 = new GramaticaLexer(cs1);
+                CommonTokenStream tokens = new CommonTokenStream(lexer1);
+                GramaticaParser parser = new GramaticaParser(tokens);
 
-        } catch (IOException ex) {
+                MyCustomErrorListener mcel = new MyCustomErrorListener(pw);
+                parser.addErrorListener(mcel);
+
+                try{
+                    parser.programa();
+                } catch (Exception e){
+                    pw.println(e.getMessage());
+                }
+                pw.println("Fim da compilacao");
+            }
+            
+        } catch (Exception e){
+            
         }
     }
 }

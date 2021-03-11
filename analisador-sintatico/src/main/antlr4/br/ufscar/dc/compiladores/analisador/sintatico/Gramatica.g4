@@ -77,7 +77,7 @@ ERRO_GERAL: .;
 /*
 ANALISE SINTATICA
 */
-programa: declaracoes 'algoritmo' corpo 'fim_algoritmo' EOF;
+programa: declaracoes 'algoritmo' corpo 'fim_algoritmo';
 declaracoes: decl_local_global*;
 decl_local_global: declaracao_local | declaracao_global;
 declaracao_local: 'declare' variavel | 'constante' IDENT ':' tipo_basico '=' valor_constante | 'tipo' IDENT ':' tipo;
@@ -108,7 +108,7 @@ cmdChamada: IDENT '(' expressao (',' expressao)* ')';
 cmdRetorne: 'retorne' expressao;
 selecao: item_selecao*;
 item_selecao: constantes ':' cmd*;
-constantes: numero_intervalo (',' numero_intervalo)*;
+constantes: numero_intervalo ('..' numero_intervalo)*;
 numero_intervalo: op_unario? NUM_INT ('. .' op_unario? NUM_INT)?;
 op_unario: '-';
 exp_aritmetica: termo (op1 termo)*;
