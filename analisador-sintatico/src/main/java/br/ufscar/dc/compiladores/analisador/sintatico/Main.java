@@ -21,6 +21,8 @@ public class Main {
                 
         try(PrintWriter pw = new PrintWriter(new File(args[1]))) { // instância do escritor do arquivo de log
             
+            //--------------ANALISE LÉXICA------------------------------------------------------------------
+            
             CharStream cs = CharStreams.fromFileName(args[0]); //manipula arquivo de entrada
             GramaticaLexer lexer = new GramaticaLexer(cs);
             
@@ -37,22 +39,21 @@ public class Main {
                
                 if("COMENTARIO_NAO_FECHADO".equals(tipo)) {
                     pw.println("Linha " + t.getLine() + ": comentario nao fechado"); //saída para erro de comentário não fechado na mesma linha
-                    pw.println("Fim da compilacao");
                     error = true;
                     break;
                 } else if("CADEIA_NAO_FECHADA".equals(tipo)) {
                     pw.println("Linha " + t.getLine() + ": cadeia literal nao fechada"); //saída para erro de cadeia não fechada na mesma linha
-                    pw.println("Fim da compilacao");
                     error = true;
                     break;
                 } else if("ERRO_GERAL".equals(tipo)) {
                     pw.println("Linha " + t.getLine() + ": " + valor + " - simbolo nao identificado"); //saída para símbolos que não fazem parte da gramática LA
-                    pw.println("Fim da compilacao");
                     error = true;
                     break;
                 }
             }
      
+            //---------------------------ANALISE SINTÁTICA--------------------------------------------
+            
             if (! error){ // se não houve erro léxico, é feita a análise sintática
             
                 CharStream cs1 = CharStreams.fromFileName(args[0]);
@@ -68,8 +69,10 @@ public class Main {
                 } catch (Exception e){
                     pw.println(e.getMessage()); // recupera a mensagem de erro causada pela exceção do tratador de erros
                 }
-                pw.println("Fim da compilacao"); // mensagem final do arquivo de log de análise léxica e sintática
+                
             }
+            
+            pw.println("Fim da compilacao"); // mensagem final do arquivo de log de análise léxica e sintática
             
         } catch (Exception e){
             

@@ -45,7 +45,7 @@ public class MyCustomErrorListener implements ANTLRErrorListener {
         // caso especial para erro de EOF para adequar à saída esperada
         if (token.equals("<EOF>")){
             token = "EOF";
-            pw.println("Linha "+ line +": erro sintatico proximo a "+token);
+            throw new RuntimeException("Linha "+ line +": erro sintatico proximo a "+token);
         }else{ // exceção gerada para erros sintáticos exceto para erro de EOF
             throw new RuntimeException("Linha "+line+": erro sintatico proximo a "+token);
         }
