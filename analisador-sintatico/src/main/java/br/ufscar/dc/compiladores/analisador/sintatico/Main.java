@@ -61,7 +61,7 @@ public class Main {
                 CommonTokenStream tokens = new CommonTokenStream(lexer1);
                 GramaticaParser parser = new GramaticaParser(tokens); // instância do parser
 
-                MyCustomErrorListener mcel = new MyCustomErrorListener(pw); // instância do tratador de erros
+                ErrorListener mcel = new ErrorListener(pw); // instância do tratador de erros
                 parser.addErrorListener(mcel);
 
                 try{

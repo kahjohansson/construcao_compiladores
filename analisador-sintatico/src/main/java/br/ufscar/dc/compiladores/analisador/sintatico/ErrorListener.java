@@ -12,11 +12,11 @@ import org.antlr.v4.runtime.dfa.DFA;
 
 
 /* classe de tratamento de erros sintáticos */
-public class MyCustomErrorListener implements ANTLRErrorListener {
+public class ErrorListener implements ANTLRErrorListener {
     
     // printer para preencher log com erros sintáticos
     PrintWriter pw;
-    public MyCustomErrorListener(PrintWriter pw){
+    public ErrorListener(PrintWriter pw){
         this.pw = pw;
     }
     
