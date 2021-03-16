@@ -19,12 +19,9 @@ input: arquivo a ser analisado léxicamente e sintáticamente segundo a gramáti
 output: arquivo com erros léxicos e sintáticos, se houverem
 */
 public class Main {
-    public static void main(String args[]) {
-                
-        try(PrintWriter pw = new PrintWriter(new File(args[1]))) { // instância do escritor do arquivo de log
-            
-            //--------------ANALISE LÉXICA------------------------------------------------------------------
-            
+    
+    public static boolean analiseLexica(String args[], PrintWriter pw) throws IOException{
+        
             CharStream cs = CharStreams.fromFileName(args[0]); //manipula arquivo de entrada
             GramaticaLexer lexer = new GramaticaLexer(cs);
             
@@ -52,13 +49,15 @@ public class Main {
                     error = true;
                     break;
                 }
+    
             }
-     
-            //---------------------------ANALISE SINTÁTICA--------------------------------------------
-            
-            if (! error){ // se não houve erro léxico, é feita a análise sintática
-            
-                CharStream cs1 = CharStreams.fromFileName(args[0]);
+        
+            return error;
+    }
+    
+    public static void analiseSintatica(String args[], PrintWriter pw) throws IOException{
+        
+        CharStream cs1 = CharStreams.fromFileName(args[0]);
                 GramaticaLexer lexer1 = new GramaticaLexer(cs1);
                 CommonTokenStream tokens = new CommonTokenStream(lexer1);
                 GramaticaParser parser = new GramaticaParser(tokens); // instância do parser
@@ -71,7 +70,22 @@ public class Main {
                 } catch (Exception e){
                     pw.println(e.getMessage()); // recupera a mensagem de erro causada pela exceção do tratador de erros
                 }
+    }
+    
+    
+    public static void main(String args[]) {
                 
+        try(PrintWriter pw = new PrintWriter(new File(args[1]))) { // instância do escritor do arquivo de log
+            
+            //--------------ANALISE LÉXICA------------------------------------------------------------------
+            boolean error;
+            error = analiseLexica(args, pw);
+
+     
+            //---------------------------ANALISE SINTÁTICA--------------------------------------------
+            
+            if (! error){ // se não houve erro léxico, é feita a análise sintática
+                analiseSintatica(args, pw);
             }
             
             pw.println("Fim da compilacao"); // mensagem final do arquivo de log de análise léxica e sintática
