@@ -9,10 +9,8 @@ public class AnalisadorSemanticoLib {
     
     public static List<String> errosSemanticos = new ArrayList<>();
     
-    public static void adicionarErroSemantico(Token t, String mensagem) {
-        int linha = t.getLine();
-        int coluna = t.getCharPositionInLine();
-        errosSemanticos.add(String.format("Erro %d:%d - %s", linha, coluna, mensagem));
+    public static void adicionarErroSemantico(int linha, String mensagem) {
+        errosSemanticos.add(String.format("Erro %d - %s", linha, mensagem));
     }
     
     public static TabelaSimbolos.TipoLA verificarTipo(TabelaSimbolos tabela, String nomeVar) {

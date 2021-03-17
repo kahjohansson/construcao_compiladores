@@ -1,10 +1,8 @@
 package br.ufscar.dc.compiladores.analisador.semantico;
 
-import br.ufscar.dc.compiladores.analisador.semantico.GramaticaLexer;
-import br.ufscar.dc.compiladores.analisador.semantico.GramaticaParser;
 import br.ufscar.dc.compiladores.analisador.semantico.GramaticaParser.ProgramaContext;
-import java.io.IOException;
 import java.io.File;
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -12,7 +10,6 @@ import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.Token;
-import org.antlr.v4.runtime.RecognitionException;
 
 /*
 Classe principal e única do analisador léxico e sintático
@@ -89,12 +86,12 @@ public class Main {
 
         try (PrintWriter pw = new PrintWriter(new File(args[1]))) { // instância do escritor do arquivo de log
 
-            /*boolean error;
+            boolean error;
             error = analiseLexica(args, pw);
 
             if (!error) { // se não houve erro léxico, é feita a análise sintática
                 analiseSintatica(args, pw);
-            }*/
+            }
             
             analiseSemantica(args, pw);
 

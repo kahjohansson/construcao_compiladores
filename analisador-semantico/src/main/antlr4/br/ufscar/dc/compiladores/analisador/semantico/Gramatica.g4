@@ -88,7 +88,7 @@ declaracao_local: 'declare' variavel | 'constante' IDENT ':' tipo_basico '=' val
 
 // VARIAVEL E IDENTIFICADOR
 variavel: identificador (',' identificador)* ':' tipo;
-identificador: IDENT ( '.' IDENT)* dimensao;
+identificador: ident1=IDENT ( '.' identLista+=IDENT)* dimensao;
 
 // DIMENSAO
 dimensao: ('[' exp_aritmetica ']')*;

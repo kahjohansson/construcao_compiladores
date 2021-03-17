@@ -9,23 +9,18 @@ public class AnalisadorSemantico extends GramaticaBaseVisitor<Void> {
     
     @Override
     public Void visitPrograma(GramaticaParser.ProgramaContext ctx){
-        AnalisadorSemanticoLib.adicionarErroSemantico(ctx.declaracoes().getStart(), "chegou em programa");
+        AnalisadorSemanticoLib.adicionarErroSemantico(ctx.declaracoes().getStart().getLine(), "chegou em programa");
         return super.visitPrograma(ctx);
     }
     
     @Override
     public Void visitDeclaracao_local(GramaticaParser.Declaracao_localContext ctx) {
         
-        
         TabelaSimbolos escopoAtual = escopos.obterEscopoAtual();
-        
-        if(ctx.variavel() != null){
-            if (escopoAtual.existe(ctx.variavel().getText())) {
-                AnalisadorSemanticoLib.adicionarErroSemantico(ctx.variavel().getStart(), "variável já declarada anteriormente"); //TODO alterar linha
-            }
-        } else if(ctx.tipo_basico() != null){
+
+        if(ctx.tipo_basico() != null){
             if(escopoAtual.existe(ctx.IDENT().getText())) {
-                AnalisadorSemanticoLib.adicionarErroSemantico(ctx.IDENT().getSymbol(), "identificador já declarado anteriormente");
+                AnalisadorSemanticoLib.adicionarErroSemantico(ctx.IDENT().getSymbol().getLine(), "identificador já declarado anteriormente");
             }else{
                 TipoLA tipo = TipoLA.INVALIDO;
                 switch(ctx.tipo_basico().getText()){
@@ -49,5 +44,18 @@ public class AnalisadorSemantico extends GramaticaBaseVisitor<Void> {
         return super.visitDeclaracao_local(ctx);
     }
     
+    @Override
+    public Void visitIdentificador(GramaticaParser.IdentificadorContext ctx) {
+        
+        TabelaSimbolos escopoAtual = escopos.obterEscopoAtual();
+        
+        if (! escopoAtual.existe(ctx.ident1.getText())) {
+            escopoAtual.adicionar(ctx.ident1.getText(), TipoLA.INTEIRO); //como pegar o tipo?
+        } else {
+            AnalisadorSemanticoLib.adicionarErroSemantico(ctx.ident1.getLine(), "variável já declarada anteriormente"); //TODO alterar linha
+        }
+        
+        return super.visitIdentificador(ctx);
+    }
     
 }
