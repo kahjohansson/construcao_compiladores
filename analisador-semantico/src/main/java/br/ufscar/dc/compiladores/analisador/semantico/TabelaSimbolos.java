@@ -13,6 +13,16 @@ public class TabelaSimbolos {
         INVALIDO
     }
     
+    public enum TipoETS {
+        VARIAVEL,
+        FUNCAO,
+        PROCEDIMENTO,
+        TIPO,
+        REGISTRO,
+        CONSTANTE
+    }
+    //TODO modificar metodos pra adicionar TipoETS
+    
     class EntradaTabelaSimbolos {
         String nome;
         TipoLA tipo;
@@ -39,6 +49,31 @@ public class TabelaSimbolos {
     
     public TipoLA verificar(String nome) {
         return tabela.get(nome).tipo;
+    }
+    
+    // retorna tipo TipoLA a partir de uma string
+    public TipoLA getTipo(String tipo) {
+        
+        TipoLA tipoLa = TipoLA.INVALIDO;
+        
+        switch (tipo){
+            case "literal":
+                tipoLa = TipoLA.LITERAL;
+                break;
+            case "inteiro":
+                tipoLa = TipoLA.INTEIRO;
+                break;
+            case "real":
+                tipoLa = TipoLA.REAL;
+                break;
+            case "logico":
+                tipoLa = TipoLA.LOGICO;
+                break;
+            default:
+                break;
+        }
+        
+        return tipoLa;
     }
     
 }

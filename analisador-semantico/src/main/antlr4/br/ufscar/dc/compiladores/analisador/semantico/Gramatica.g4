@@ -87,7 +87,7 @@ decl_local_global: declaracao_local | declaracao_global;
 declaracao_local: 'declare' variavel | 'constante' IDENT ':' tipo_basico '=' valor_constante | 'tipo' IDENT ':' tipo;
 
 // VARIAVEL E IDENTIFICADOR
-variavel: identificador (',' identificador)* ':' tipo;
+variavel: ident1=identificador (',' identLista+=identificador)* ':' tipo;
 identificador: ident1=IDENT ( '.' identLista+=IDENT)* dimensao;
 
 // DIMENSAO
@@ -142,7 +142,7 @@ op3: '%';
 
 // PARCELA
 parcela: op_unario? parcela_unario | parcela_nao_unario;
-parcela_unario: '^'? identificador | IDENT '(' expressao (',' expressao)? ')' | NUM_INT | NUM_REAL | '(' expressao ')';
+parcela_unario: '^'? identificador | IDENT '(' expressao (',' expressao)? ')' | NUM_INT | NUM_REAL | '(' expParenteses=expressao ')';
 parcela_nao_unario: '&' identificador | CADEIA;
 
 // EXPRESSOES E OPERADORES RELACIONAIS
