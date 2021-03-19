@@ -6,6 +6,7 @@ import br.ufscar.dc.compiladores.analisador.semantico.TabelaSimbolos.TipoETS;
 public class VisitorString extends GramaticaBaseVisitor<Void> {
 
     Escopos escopos = new Escopos();
+    VerificadorTipo verificadorTipo = new VerificadorTipo(escopos);
     
     @Override
     public Void visitDeclaracao_local(GramaticaParser.Declaracao_localContext ctx) {
@@ -31,12 +32,16 @@ public class VisitorString extends GramaticaBaseVisitor<Void> {
                 TipoLA variavelTipo = escopoAtual.getTipo(ctx.tipo().getText());
                 escopoAtual.adicionar(ictx.getText(), variavelTipo, TipoETS.VARIAVEL);
                 if (variavelTipo == TipoLA.INVALIDO) {
-                    AnalisadorSemanticoLib.adicionarErroSemantico(ictx.getStart().getLine(),
-                            "tipo", ctx.tipo().getText(), "não declarado");
+                    String mensagem = String.format("Linha %d: tipo %s não declarado",
+                            ictx.getStart().getLine(),
+                            ctx.tipo().getText());
+                    AnalisadorSemanticoLib.adicionarErroSemantico(mensagem);
                 }
             } else {
-                AnalisadorSemanticoLib.adicionarErroSemantico(ictx.getStart().getLine(),
-                        "identificador", ictx.getText(), "ja declarado anteriormente");
+                String mensagem = String.format("Linha %d: tipo %s não declarado",
+                            ictx.getStart().getLine(),
+                            ctx.getText());
+                    AnalisadorSemanticoLib.adicionarErroSemantico(mensagem);
             }
         }
 
@@ -66,8 +71,10 @@ public class VisitorString extends GramaticaBaseVisitor<Void> {
         
         if(ctx.identificador() != null) {
             if (! escopoAtual.existe(ctx.identificador().getText())) {
-            AnalisadorSemanticoLib.adicionarErroSemantico(ctx.identificador().getStart().getLine(),
-                    "identificador", ctx.identificador().getText(), "nao declarado");
+                String mensagem = String.format("Linha %d: identificador %s nao declarado",
+                        ctx.identificador().getStart().getLine(),
+                        ctx.identificador().getText());
+                AnalisadorSemanticoLib.adicionarErroSemantico(mensagem);
             }
         }
         
@@ -81,12 +88,34 @@ public class VisitorString extends GramaticaBaseVisitor<Void> {
 
         if(ctx.identificador() != null){
             if (! escopoAtual.existe(ctx.identificador().getText())) {
-                AnalisadorSemanticoLib.adicionarErroSemantico(ctx.identificador().getStart().getLine(),
-                        "identificador", ctx.identificador().getText(), "nao declarado");
+                String mensagem = String.format("Linha %d: identificador %s nao declarado", 
+                        ctx.identificador().getStart().getLine(),
+                        ctx.identificador().getText());
+                AnalisadorSemanticoLib.adicionarErroSemantico(mensagem);
             }
         }
 
         return super.visitParcela_unario(ctx);
+    }
+    
+    @Override
+    public Void visitCmdAtribuicao(GramaticaParser.CmdAtribuicaoContext ctx) {
+
+        TabelaSimbolos escopoAtual = escopos.obterEscopoAtual();
+        
+        TipoLA tipoExpressao = verificadorTipo.verificaTipo(ctx.expressao());
+
+        if(tipoExpressao == TipoLA.INVALIDO) {
+            String mensagem = String.format("Linha %d: atribuicao nao compativel para %s", 
+                    ctx.getStart().getLine(), ctx.identificador().getText());
+            AnalisadorSemanticoLib.adicionarErroSemantico(mensagem);
+        } else if(escopoAtual.verificar(ctx.identificador().getText()) != tipoExpressao){
+            String mensagem = String.format("Linha %d: atribuicao nao compativel para %s", 
+                    ctx.getStart().getLine(), ctx.identificador().getText());
+            AnalisadorSemanticoLib.adicionarErroSemantico(mensagem);
+        }
+
+        return super.visitCmdAtribuicao(ctx);
     }
     
 }

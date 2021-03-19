@@ -123,7 +123,7 @@ cmdCaso: 'caso' exp_aritmetica 'seja' selecao ('senao' cmd*)? 'fim_caso';
 cmdPara: 'para' IDENT '<-' exp_aritmetica 'ate' exp_aritmetica 'faca' cmd* 'fim_para';
 cmdEnquanto: 'enquanto' expressao 'faca' cmd* 'fim_enquanto';
 cmdFaca: 'faca' cmd* 'ate' expressao ;
-cmdAtribuicao: '^'? identificador '<-' expressao ;
+cmdAtribuicao: '^'? identificador '<-' expressao;
 cmdChamada: IDENT '(' expressao (',' expressao)* ')';
 cmdRetorne: 'retorne' expressao;
 

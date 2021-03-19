@@ -22,7 +22,6 @@ public class TabelaSimbolos {
         REGISTRO,
         CONSTANTE
     }
-    //TODO modificar metodos pra adicionar TipoETS
     
     class EntradaTabelaSimbolos {
         String nome;
@@ -54,7 +53,7 @@ public class TabelaSimbolos {
         return tabela.get(nome).tipoLa;
     }
     
-    // retorna tipo TipoLA a partir de uma string
+    // retorna tipo TipoLA dada uma string
     public TipoLA getTipo(String tipo) {
         
         TipoLA tipoLa = TipoLA.INVALIDO;
