@@ -32,13 +32,13 @@ public class VisitorString extends GramaticaBaseVisitor<Void> {
                 TipoLA variavelTipo = escopoAtual.getTipo(ctx.tipo().getText());
                 escopoAtual.adicionar(ictx.getText(), variavelTipo, TipoETS.VARIAVEL);
                 if (variavelTipo == TipoLA.INVALIDO) {
-                    String mensagem = String.format("Linha %d: tipo %s não declarado",
+                    String mensagem = String.format("Linha %d: tipo %s nao declarado",
                             ictx.getStart().getLine(),
                             ctx.tipo().getText());
                     AnalisadorSemanticoLib.adicionarErroSemantico(mensagem);
                 }
             } else {
-                String mensagem = String.format("Linha %d: tipo %s não declarado",
+                String mensagem = String.format("Linha %d: tipo %s nao declarado",
                             ictx.getStart().getLine(),
                             ctx.getText());
                     AnalisadorSemanticoLib.adicionarErroSemantico(mensagem);
@@ -56,8 +56,10 @@ public class VisitorString extends GramaticaBaseVisitor<Void> {
 
         for (GramaticaParser.IdentificadorContext ictx : ctx.identificador()) {
             if (!escopoAtual.existe(ictx.getText())) {
-                AnalisadorSemanticoLib.adicionarErroSemantico(ictx.getStart().getLine(),
-                        "identificador", ictx.getText(), "nao declarado");
+                String mensagem = String.format("Linha %d: identificador %s não declarado",
+                    ictx.getStart().getLine(),
+                    ictx.getText());
+                AnalisadorSemanticoLib.adicionarErroSemantico(mensagem);
             }
         }
 

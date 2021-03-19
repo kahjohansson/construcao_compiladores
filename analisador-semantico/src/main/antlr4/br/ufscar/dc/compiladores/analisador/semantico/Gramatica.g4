@@ -34,8 +34,9 @@ BLOCO DE PADRÕES DE LEXEMAS FORMADOS POR ALGARISMOS NUMÉRICOS
 - número real (NUM_REAL): números reais positivos com pelo menos uma casa
     decimal sem sinal
 */
+
+NUM_REAL: NUMERO+ ('.' NUMERO+)?;
 NUM_INT: NUMERO+;
-NUM_REAL: NUMERO+ '.' NUMERO+;
 
 /*
 BLOCO DE PADRÕES DE LEXEMAS FORMADOS POR SÍMBOLOS DIVERSOS OU OPERADORES
