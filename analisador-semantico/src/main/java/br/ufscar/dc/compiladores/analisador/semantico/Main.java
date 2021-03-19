@@ -77,7 +77,7 @@ public class Main {
         CommonTokenStream tokens = new CommonTokenStream(lexer);
         GramaticaParser parser = new GramaticaParser(tokens);
         ProgramaContext arvore = parser.programa();
-        AnalisadorSemantico analisador = new AnalisadorSemantico();
+        VisitorString analisador = new VisitorString();
         analisador.visitPrograma(arvore);
         AnalisadorSemanticoLib.errosSemanticos.forEach((s) -> pw.println(s));
     }

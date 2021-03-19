@@ -83,11 +83,13 @@ programa: declaracoes 'algoritmo' corpo 'fim_algoritmo';
 
 // DECLARACOES
 declaracoes: decl_local_global*;
-decl_local_global: declaracao_local | declaracao_global;
-declaracao_local: 'declare' variavel | 'constante' IDENT ':' tipo_basico '=' valor_constante | 'tipo' IDENT ':' tipo;
+decl_local_global: declaracao_local |declaracao_global;
+declaracao_local: 'declare' variavel | 
+                  'constante' IDENT ':' tipo_basico '=' valor_constante |
+                  'tipo' IDENT ':' tipo;
 
 // VARIAVEL E IDENTIFICADOR
-variavel: ident1=identificador (',' identLista+=identificador)* ':' tipo;
+variavel: identificador (',' identificador)* ':' tipo;
 identificador: ident1=IDENT ( '.' identLista+=IDENT)* dimensao;
 
 // DIMENSAO
