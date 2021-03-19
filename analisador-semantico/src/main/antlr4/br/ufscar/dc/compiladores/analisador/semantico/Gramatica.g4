@@ -144,7 +144,11 @@ op3: '%';
 
 // PARCELA
 parcela: op_unario? parcela_unario | parcela_nao_unario;
-parcela_unario: '^'? identificador | IDENT '(' expressao (',' expressao)? ')' | NUM_INT | NUM_REAL | '(' expParenteses=expressao ')';
+parcela_unario: '^'? identificador |
+                IDENT '(' expressao (',' expressao)? ')' |
+                NUM_INT |
+                NUM_REAL |
+                '(' expParenteses=expressao ')';
 parcela_nao_unario: '&' identificador | CADEIA;
 
 // EXPRESSOES E OPERADORES RELACIONAIS

@@ -10,7 +10,8 @@ public class TabelaSimbolos {
         INTEIRO,
         REAL,
         LOGICO,
-        INVALIDO
+        INVALIDO,
+        SEMTIPO
     }
     
     public enum TipoETS {
@@ -25,11 +26,13 @@ public class TabelaSimbolos {
     
     class EntradaTabelaSimbolos {
         String nome;
-        TipoLA tipo;
+        TipoLA tipoLa;
+        TipoETS tipoEts;
 
-        private EntradaTabelaSimbolos(String nome, TipoLA tipo) {
+        private EntradaTabelaSimbolos(String nome, TipoLA tipoLa, TipoETS tipoEts) {
             this.nome = nome;
-            this.tipo = tipo;
+            this.tipoLa = tipoLa;
+            this.tipoEts = tipoEts;
         }
     }
     
@@ -39,8 +42,8 @@ public class TabelaSimbolos {
         this.tabela = new HashMap<>();
     }
     
-    public void adicionar(String nome, TipoLA tipo) {
-        tabela.put(nome, new EntradaTabelaSimbolos(nome, tipo));
+    public void adicionar(String nome, TipoLA tipoLa, TipoETS tipoEts) {
+        tabela.put(nome, new EntradaTabelaSimbolos(nome, tipoLa, tipoEts));
     }
     
     public boolean existe(String nome) {
@@ -48,7 +51,7 @@ public class TabelaSimbolos {
     }
     
     public TipoLA verificar(String nome) {
-        return tabela.get(nome).tipo;
+        return tabela.get(nome).tipoLa;
     }
     
     // retorna tipo TipoLA a partir de uma string
