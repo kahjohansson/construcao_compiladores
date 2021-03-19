@@ -12,7 +12,7 @@ Clone o projeto. Utilizando a IDE Netbeans, abra o projeto `analisador-sintatico
 
 Neste repositório, está disponível o arquivo executável `target/analisador-sintatico-1.0-SNAPSHOT-jar-with-dependencies.jar`, que também pode ser gerado seguindo as instruções da seção anterior.
 
-Para rodar o projeto, estando na raiz do projeto (`analisador-sinatico`), execute como apresentado a seguir:
+Para rodar o projeto, estando na raiz do projeto (`analisador-sintatico`), execute como apresentado a seguir:
 ```
 java -jar target/analisador-sintatico-1.0-SNAPSHOT-jar-with-dependencies.jar <arquivo-entrada> <arquivo-saida>
 ```
