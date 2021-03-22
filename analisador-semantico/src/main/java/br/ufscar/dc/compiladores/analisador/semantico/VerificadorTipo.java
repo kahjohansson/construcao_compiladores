@@ -66,7 +66,7 @@ public class VerificadorTipo {
         
         for (GramaticaParser.TermoContext tctx : ctx.termo()) {
             TipoLA tipo = verificaTipo(tctx);
-            if (tipo != ret){ //TODO caso necessário, testar a compatibilidade
+            if (tipo != ret && !((ret == TipoLA.INTEIRO && tipo == TipoLA.REAL) || (ret == TipoLA.REAL && tipo == TipoLA.INTEIRO))){ //TODO caso necessário, testar a compatibilidade
                 return TipoLA.INVALIDO;
                 //TODO tratar erro semântico
             }
@@ -80,7 +80,7 @@ public class VerificadorTipo {
         
         for (GramaticaParser.FatorContext fctx : ctx.fator()) {
             TipoLA tipo = verificaTipo(fctx);
-            if (tipo != ret){ //TODO caso necessário, testar a compatibilidade
+            if (tipo != ret && !((ret == TipoLA.INTEIRO && tipo == TipoLA.REAL) || (ret == TipoLA.REAL && tipo == TipoLA.INTEIRO))){ //TODO caso necessário, testar a compatibilidade
                 return TipoLA.INVALIDO;
                 //TODO tratar erro semântico
             }

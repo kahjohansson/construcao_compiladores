@@ -11,7 +11,9 @@ public class TabelaSimbolos {
         REAL,
         LOGICO,
         INVALIDO,
-        SEMTIPO
+        SEMTIPO,
+        TIPOESTENDIDO,
+        REGISTRO
     }
     
     public enum TipoETS {
@@ -19,20 +21,30 @@ public class TabelaSimbolos {
         FUNCAO,
         PROCEDIMENTO,
         TIPO,
-        REGISTRO,
         CONSTANTE
     }
     
     class EntradaTabelaSimbolos {
         String nome;
+        String tipoLaEstendido;
         TipoLA tipoLa;
         TipoETS tipoEts;
+        TabelaSimbolos subtabela;
 
-        private EntradaTabelaSimbolos(String nome, TipoLA tipoLa, TipoETS tipoEts) {
+        private EntradaTabelaSimbolos(String nome, String tipoLaEstendido, TipoLA tipoLa, TipoETS tipoEts, TabelaSimbolos subtabela) {
             this.nome = nome;
+            this.tipoLaEstendido = tipoLaEstendido;
             this.tipoLa = tipoLa;
             this.tipoEts = tipoEts;
+            this.subtabela = subtabela;
+            //TODO adicionar lista de parametros para procedimentos e funções
         }
+        
+        private EntradaTabelaSimbolos(String nome, TipoLA tipoLa, TipoETS tipoEts) {
+            this(nome, null, tipoLa, tipoEts, null);
+        }
+        
+        
     }
     
     private final Map<String, EntradaTabelaSimbolos> tabela;
@@ -41,8 +53,8 @@ public class TabelaSimbolos {
         this.tabela = new HashMap<>();
     }
     
-    public void adicionar(String nome, TipoLA tipoLa, TipoETS tipoEts) {
-        tabela.put(nome, new EntradaTabelaSimbolos(nome, tipoLa, tipoEts));
+    public void adicionar(String nome, String tipoLaEstendido, TipoLA tipoLa, TipoETS tipoEts, TabelaSimbolos subtabela) {
+        tabela.put(nome, new EntradaTabelaSimbolos(nome, tipoLaEstendido, tipoLa, tipoEts, subtabela));
     }
     
     public boolean existe(String nome) {
