@@ -25,12 +25,6 @@ public class TabelaSimbolos {
         CONSTANTE
     }
     
-    //TODO excluir
-    public enum TipoEstendido {
-        PONTEIRO,
-        OUTRO
-    }
-    
     class EntradaTabelaSimbolos {
         String nome;
         String tipoLaEstendido;
