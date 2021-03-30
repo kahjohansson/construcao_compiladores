@@ -2,6 +2,7 @@ package br.ufscar.dc.compiladores.analisador.semantico;
 
 import br.ufscar.dc.compiladores.analisador.semantico.TabelaSimbolos.TipoLA;
 import br.ufscar.dc.compiladores.analisador.semantico.TabelaSimbolos.TipoETS;
+import br.ufscar.dc.compiladores.analisador.semantico.TabelaSimbolos.TipoEstendido;
 
 public class VisitorString extends GramaticaBaseVisitor<Void> {
 
@@ -16,7 +17,7 @@ public class VisitorString extends GramaticaBaseVisitor<Void> {
         if (ctx.tipo_basico() != null) {
             if (!escopoAtual.existe(ctx.IDENT().getText())) {
                 TipoLA tipoLa = escopoAtual.getTipo(ctx.tipo_basico().getText());
-                escopoAtual.adicionar(ctx.IDENT().getText(), null, tipoLa, TipoETS.CONSTANTE, null);
+                escopoAtual.adicionar(ctx.IDENT().getText(), null, tipoLa, TipoETS.CONSTANTE, null, false);
             }
         }else if(ctx.tipo() != null){
             
@@ -28,38 +29,47 @@ public class VisitorString extends GramaticaBaseVisitor<Void> {
     public Void visitVariavel(GramaticaParser.VariavelContext ctx) {
 
         TabelaSimbolos escopoAtual = escopos.obterEscopoAtual();
-
+        
+        //verificacao de tipo
         TipoLA variavelTipo = TipoLA.INVALIDO;
         TabelaSimbolos escopoRegistro = null;
-        String tipoLaEstendido = null;
+        String tipoEstendido = null;
+        boolean ponteiro = false;
         if (ctx.tipo().registro() != null) {
             escopos.criarNovoEscopo();
             visitRegistro(ctx.tipo().registro());
             escopoRegistro = escopos.obterEscopoAtual();
             escopos.abandonarEscopo();
             variavelTipo = TipoLA.REGISTRO;
-        }else if(ctx.tipo().tipo_estendido().tipo_basico_ident().tipo_basico() != null){
-            variavelTipo = escopoAtual.getTipo(ctx.tipo().getText());
         }else{
-            variavelTipo = TipoLA.TIPOESTENDIDO;
-            tipoLaEstendido = ctx.tipo().tipo_estendido().tipo_basico_ident().IDENT().getText();
+            ponteiro = escopoAtual.ponteiro(ctx.tipo().tipo_estendido().getText());
+            
+            if(ctx.tipo().tipo_estendido().tipo_basico_ident().tipo_basico() != null){
+                variavelTipo = escopoAtual.getTipo(ctx.tipo().tipo_estendido().tipo_basico_ident().tipo_basico().getText());
+            }else{
+                variavelTipo = TipoLA.TIPOESTENDIDO;
+                String tipoIdent = ctx.tipo().tipo_estendido().tipo_basico_ident().IDENT().getText();
+
+                //TODO verificar se tipo é estendido, para isso precisa-se saber dado um escopo, quais tipos estendidos ele contem
+                //talvez criar lista com tipos entendidos do escopo
+                variavelTipo = escopoAtual.getTipo(tipoIdent);
+                if (variavelTipo == TipoLA.INVALIDO) {
+                        String mensagem = String.format("Linha %d: tipo %s nao declarado",
+                                ctx.getStart().getLine(),
+                                tipoIdent);
+                        AnalisadorSemanticoLib.adicionarErroSemantico(mensagem);
+                }
+            }
         }
         
-
+        //verificacao de nome de variavel
         for (GramaticaParser.IdentificadorContext ictx : ctx.identificador()) {
             if (!escopoAtual.existe(ictx.getText())) {
-                
-                escopoAtual.adicionar(ictx.getText(), tipoLaEstendido, variavelTipo, TipoETS.VARIAVEL, escopoRegistro);
-                if (variavelTipo == TipoLA.INVALIDO) {
-                    String mensagem = String.format("Linha %d: tipo %s nao declarado",
-                            ictx.getStart().getLine(),
-                            ctx.tipo().getText());
-                    AnalisadorSemanticoLib.adicionarErroSemantico(mensagem);
-                }
+                escopoAtual.adicionar(ictx.getText(), tipoEstendido, variavelTipo, TipoETS.VARIAVEL, escopoRegistro, ponteiro);
             } else {
-                String mensagem = String.format("Linha %d: tipo %s nao declarado",
+                String mensagem = String.format("Linha %d: identificador %s ja declarado anteriormente",
                         ictx.getStart().getLine(),
-                        ctx.getText());
+                        ictx.getText());
                 AnalisadorSemanticoLib.adicionarErroSemantico(mensagem);
             }
         }
@@ -125,15 +135,25 @@ public class VisitorString extends GramaticaBaseVisitor<Void> {
         TabelaSimbolos escopoAtual = escopos.obterEscopoAtual();
 
         TipoLA tipoExpressao = verificadorTipo.verificaTipo(ctx.expressao());
+        
+        String nomeIdentificador = ctx.identificador().getText();
+        if(ctx.simbolo != null){
+            nomeIdentificador = ctx.simbolo.getText() + nomeIdentificador;
+        }
 
         if (tipoExpressao == TipoLA.INVALIDO) {
             String mensagem = String.format("Linha %d: atribuicao nao compativel para %s",
-                    ctx.getStart().getLine(), ctx.identificador().getText());
+                    ctx.getStart().getLine(), nomeIdentificador);
             AnalisadorSemanticoLib.adicionarErroSemantico(mensagem);
         } else if (escopoAtual.verificar(ctx.identificador().getText()) != tipoExpressao) { //TODO modificar para novo tipo registro
-            if (!(escopoAtual.verificar(ctx.identificador().getText()) == TipoLA.REAL && tipoExpressao == TipoLA.INTEIRO)) {
+            
+            //verificação se identificador nesse contexto é ponteiro ou não
+            boolean identificadorPonteiro = escopoAtual.ponteiro(ctx.getText().startsWith("^"), escopoAtual.verificarPonteiro(ctx.identificador().getText()));
+            
+            if (!(escopoAtual.verificar(ctx.identificador().getText()) == TipoLA.REAL && tipoExpressao == TipoLA.INTEIRO)
+                    || !(identificadorPonteiro && ctx.expressao().getText().startsWith("&"))) {
                 String mensagem = String.format("Linha %d: atribuicao nao compativel para %s",
-                        ctx.getStart().getLine(), ctx.identificador().getText());
+                        ctx.getStart().getLine(), nomeIdentificador);
                 AnalisadorSemanticoLib.adicionarErroSemantico(mensagem);
             }
         }

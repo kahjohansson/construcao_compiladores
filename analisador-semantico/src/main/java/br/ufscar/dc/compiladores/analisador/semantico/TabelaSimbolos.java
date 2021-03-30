@@ -16,6 +16,7 @@ public class TabelaSimbolos {
         REGISTRO
     }
     
+    //tipo entrada tabela de simbolos
     public enum TipoETS {
         VARIAVEL,
         FUNCAO,
@@ -24,24 +25,32 @@ public class TabelaSimbolos {
         CONSTANTE
     }
     
+    //TODO excluir
+    public enum TipoEstendido {
+        PONTEIRO,
+        OUTRO
+    }
+    
     class EntradaTabelaSimbolos {
         String nome;
         String tipoLaEstendido;
         TipoLA tipoLa;
         TipoETS tipoEts;
         TabelaSimbolos subtabela;
+        boolean ponteiro;
 
-        private EntradaTabelaSimbolos(String nome, String tipoLaEstendido, TipoLA tipoLa, TipoETS tipoEts, TabelaSimbolos subtabela) {
+        private EntradaTabelaSimbolos(String nome, String tipoLaEstendido, TipoLA tipoLa, TipoETS tipoEts, TabelaSimbolos subtabela, boolean ponteiro) {
             this.nome = nome;
             this.tipoLaEstendido = tipoLaEstendido;
             this.tipoLa = tipoLa;
             this.tipoEts = tipoEts;
             this.subtabela = subtabela;
+            this.ponteiro = ponteiro;
             //TODO adicionar lista de parametros para procedimentos e funções
         }
         
-        private EntradaTabelaSimbolos(String nome, TipoLA tipoLa, TipoETS tipoEts) {
-            this(nome, null, tipoLa, tipoEts, null);
+        private EntradaTabelaSimbolos(String nome, TipoLA tipoLa, TipoETS tipoEts, boolean ponteiro) {
+            this(nome, null, tipoLa, tipoEts, null, ponteiro);
         }
         
         
@@ -53,16 +62,20 @@ public class TabelaSimbolos {
         this.tabela = new HashMap<>();
     }
     
-    public void adicionar(String nome, String tipoLaEstendido, TipoLA tipoLa, TipoETS tipoEts, TabelaSimbolos subtabela) {
-        tabela.put(nome, new EntradaTabelaSimbolos(nome, tipoLaEstendido, tipoLa, tipoEts, subtabela));
+    public void adicionar(String nome, String tipoLaEstendido, TipoLA tipoLa, TipoETS tipoEts, TabelaSimbolos subtabela, boolean ponteiro) {
+        tabela.put(nome, new EntradaTabelaSimbolos(nome, tipoLaEstendido, tipoLa, tipoEts, subtabela, ponteiro));
     }
     
     public boolean existe(String nome) {
         return tabela.containsKey(nome);
     }
-    
+        
     public TipoLA verificar(String nome) {
         return tabela.get(nome).tipoLa;
+    }
+    
+    public String verificarTipoLaEstendido(String nome){
+        return tabela.get(nome).tipoLaEstendido;
     }
     
     // retorna tipo TipoLA dada uma string
@@ -88,6 +101,24 @@ public class TabelaSimbolos {
         }
         
         return tipoLa;
+    }
+    
+    public boolean ponteiro(String texto){
+        if (texto.startsWith("^") || texto.startsWith("&")){
+            return true;
+        }
+        return false;
+    }
+    
+    public boolean verificarPonteiro(String nome){
+        return tabela.get(nome).ponteiro;
+    }
+    
+    public boolean ponteiro(boolean simboloPonteiro, boolean identificador){
+        if(simboloPonteiro && identificador) { return false; }
+        else if(simboloPonteiro && !identificador) { return true;}
+        else if(!simboloPonteiro && identificador) { return true;}
+        return false;
     }
     
 }
