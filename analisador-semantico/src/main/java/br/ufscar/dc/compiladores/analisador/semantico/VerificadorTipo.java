@@ -1,6 +1,7 @@
 package br.ufscar.dc.compiladores.analisador.semantico;
 
 import br.ufscar.dc.compiladores.analisador.semantico.TabelaSimbolos.TipoLA;
+import org.antlr.v4.runtime.Token;
 
 public class VerificadorTipo {
     
@@ -139,5 +140,27 @@ public class VerificadorTipo {
         }
         
         return TipoLA.LITERAL;
+    }
+    
+    public TipoLA verificaTipo(GramaticaParser.IdentificadorContext ctx) {
+        
+        TabelaSimbolos escopoAtual = escopos.obterEscopoAtual();
+        TabelaSimbolos subtabela = null;
+        TipoLA tipoLa = TipoLA.INVALIDO;
+        
+        if(ctx.identLista != null){
+            if(escopoAtual.existe(ctx.ident1.getText())){
+                subtabela = escopoAtual.getSubTabela(ctx.ident1.getText());
+                tipoLa = subtabela.verificar(ctx.identLista.get(0).getText().toString());
+            }
+            
+        }else{
+            
+            if(escopoAtual.existe(ctx.ident1.getText())){
+                tipoLa = escopoAtual.verificar(ctx.ident1.getText());
+            }
+        }
+        
+        return tipoLa;
     }
 }

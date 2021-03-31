@@ -1,5 +1,6 @@
 package br.ufscar.dc.compiladores.analisador.semantico;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -24,6 +25,8 @@ public class TabelaSimbolos {
         TIPO,
         CONSTANTE
     }
+    
+    ArrayList<String> tiposEstendidos = new ArrayList<String>();
     
     class EntradaTabelaSimbolos {
         String nome;
@@ -72,6 +75,10 @@ public class TabelaSimbolos {
         return tabela.get(nome).tipoLaEstendido;
     }
     
+    public TabelaSimbolos getSubTabela(String nome){
+        return tabela.get(nome).subtabela;
+    }
+    
     // retorna tipo TipoLA dada uma string
     public TipoLA getTipo(String tipo) {
         
@@ -115,4 +122,11 @@ public class TabelaSimbolos {
         return false;
     }
     
+    public void adicionaTipoEstendido(String tipoEstendido){
+        tiposEstendidos.add(tipoEstendido);
+    }
+    
+    public boolean existeTipoEstendido(String tipoEstendido){
+        return tiposEstendidos.contains(tipoEstendido);
+    }
 }

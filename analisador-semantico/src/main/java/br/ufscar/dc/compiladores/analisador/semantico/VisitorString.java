@@ -2,6 +2,7 @@ package br.ufscar.dc.compiladores.analisador.semantico;
 
 import br.ufscar.dc.compiladores.analisador.semantico.TabelaSimbolos.TipoLA;
 import br.ufscar.dc.compiladores.analisador.semantico.TabelaSimbolos.TipoETS;
+import org.antlr.v4.runtime.Token;
 
 public class VisitorString extends GramaticaBaseVisitor<Void> {
 
@@ -19,8 +20,11 @@ public class VisitorString extends GramaticaBaseVisitor<Void> {
                 escopoAtual.adicionar(ctx.IDENT().getText(), null, tipoLa, TipoETS.CONSTANTE, null, false);
             }
         }else if(ctx.tipo() != null){
-            
+            if(! escopoAtual.existeTipoEstendido(ctx.IDENT().getText())){
+                escopoAtual.adicionaTipoEstendido(ctx.IDENT().getText());
+            }
         }
+        
         return super.visitDeclaracao_local(ctx);
     }
 
@@ -34,24 +38,27 @@ public class VisitorString extends GramaticaBaseVisitor<Void> {
         TabelaSimbolos escopoRegistro = null;
         String tipoEstendido = null;
         boolean ponteiro = false;
-        if (ctx.tipo().registro() != null) {
+        
+        if (ctx.tipo().registro() != null) { // tipo registro
             escopos.criarNovoEscopo();
             visitRegistro(ctx.tipo().registro());
             escopoRegistro = escopos.obterEscopoAtual();
             escopos.abandonarEscopo();
             variavelTipo = TipoLA.REGISTRO;
-        }else{
+            
+            
+        }else{ //tipo estendido
             ponteiro = escopoAtual.ponteiro(ctx.tipo().tipo_estendido().getText());
             
-            if(ctx.tipo().tipo_estendido().tipo_basico_ident().tipo_basico() != null){
+            if(ctx.tipo().tipo_estendido().tipo_basico_ident().tipo_basico() != null){ // tipo basico
                 variavelTipo = escopoAtual.getTipo(ctx.tipo().tipo_estendido().tipo_basico_ident().tipo_basico().getText());
-            }else{
+            }else{ // tipo IDENT (estendido)
                 variavelTipo = TipoLA.TIPOESTENDIDO;
                 String tipoIdent = ctx.tipo().tipo_estendido().tipo_basico_ident().IDENT().getText();
-
-                //TODO verificar se tipo é estendido, para isso precisa-se saber dado um escopo, quais tipos estendidos ele contem
-                //talvez criar lista com tipos entendidos do escopo
-                variavelTipo = escopoAtual.getTipo(tipoIdent);
+                boolean tipoEstendidoExiste = escopoAtual.existeTipoEstendido(tipoIdent);
+                if (! tipoEstendidoExiste){
+                    variavelTipo = escopoAtual.getTipo(tipoIdent);
+                }
                 if (variavelTipo == TipoLA.INVALIDO) {
                         String mensagem = String.format("Linha %d: tipo %s nao declarado",
                                 ctx.getStart().getLine(),
@@ -61,7 +68,7 @@ public class VisitorString extends GramaticaBaseVisitor<Void> {
             }
         }
         
-        //verificacao de nome de variavel
+        //verificacao de nome de variavel e gravação da variável na tabela
         for (GramaticaParser.IdentificadorContext ictx : ctx.identificador()) {
             if (!escopoAtual.existe(ictx.getText())) {
                 escopoAtual.adicionar(ictx.getText(), tipoEstendido, variavelTipo, TipoETS.VARIAVEL, escopoRegistro, ponteiro);
@@ -76,7 +83,21 @@ public class VisitorString extends GramaticaBaseVisitor<Void> {
         return super.visitVariavel(ctx);
 
     }
-
+    
+    //precisa dessa função?
+//    @Override
+//    public Void visitRegistro(GramaticaParser.RegistroContext ctx) {
+//
+//        TabelaSimbolos escopoAtual = escopos.obterEscopoAtual();
+//        
+//        for(GramaticaParser.VariavelContext vctx: ctx.variavel()){
+//            visitVariavel(vctx);
+//        }
+//
+//
+//        return super.visitRegistro(ctx);
+//    }
+    
     @Override
     public Void visitCmdLeia(GramaticaParser.CmdLeiaContext ctx) {
 
@@ -132,9 +153,12 @@ public class VisitorString extends GramaticaBaseVisitor<Void> {
     public Void visitCmdAtribuicao(GramaticaParser.CmdAtribuicaoContext ctx) {
 
         TabelaSimbolos escopoAtual = escopos.obterEscopoAtual();
+        TabelaSimbolos subTabela = null;
 
         TipoLA tipoExpressao = verificadorTipo.verificaTipo(ctx.expressao());
+        TipoLA tipoIdentificador = verificadorTipo.verificaTipo(ctx.identificador());
         
+        String nomeUltimoIdentificador = ctx.identificador().getText();
         String nomeIdentificador = ctx.identificador().getText();
         if(ctx.simbolo != null){
             nomeIdentificador = ctx.simbolo.getText() + nomeIdentificador;
@@ -144,15 +168,20 @@ public class VisitorString extends GramaticaBaseVisitor<Void> {
             String mensagem = String.format("Linha %d: atribuicao nao compativel para %s",
                     ctx.getStart().getLine(), nomeIdentificador);
             AnalisadorSemanticoLib.adicionarErroSemantico(mensagem);
-        } else if (escopoAtual.verificar(ctx.identificador().getText()) != tipoExpressao) { //TODO modificar para novo tipo registro
+        } else if (tipoIdentificador != tipoExpressao) { //TODO modificar para novo tipo registro
             
-            //verificação se identificador nesse contexto é ponteiro ou não
-            boolean identificadorPonteiro = escopoAtual.ponteiro(ctx.getText().startsWith("^"), escopoAtual.verificarPonteiro(ctx.identificador().getText()));
+            if(ctx.identificador().identLista != null){ // verifica se é registro, se for, modifica o nome da variavel a ser analisada e o escopo
+                escopoAtual = escopoAtual.getSubTabela(ctx.identificador().ident1.getText());
+                nomeUltimoIdentificador = ctx.identificador().identLista.get(0).getText();
+            }
             
-            if (!(escopoAtual.verificar(ctx.identificador().getText()) == TipoLA.REAL && tipoExpressao == TipoLA.INTEIRO)
+//            verificação se identificador nesse contexto é ponteiro ou não
+            boolean identificadorPonteiro = escopoAtual.ponteiro(ctx.getText().startsWith("^"), escopoAtual.verificarPonteiro(nomeUltimoIdentificador));
+//            
+            if (!(escopoAtual.verificar(nomeUltimoIdentificador) == TipoLA.REAL && tipoExpressao == TipoLA.INTEIRO)
                     || !(identificadorPonteiro && ctx.expressao().getText().startsWith("&"))) {
                 String mensagem = String.format("Linha %d: atribuicao nao compativel para %s",
-                        ctx.getStart().getLine(), nomeIdentificador);
+                        ctx.getStart().getLine(), ctx.identificador().getText());
                 AnalisadorSemanticoLib.adicionarErroSemantico(mensagem);
             }
         }
