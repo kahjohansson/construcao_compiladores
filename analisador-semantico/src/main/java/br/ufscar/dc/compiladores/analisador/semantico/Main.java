@@ -70,7 +70,7 @@ public class Main {
         }
     }
 
-    public static void analiseSemantica(String args[], PrintWriter pw) throws IOException {
+    public static ProgramaContext analiseSemantica(String args[], PrintWriter pw) throws IOException {
 
         CharStream cs = CharStreams.fromFileName(args[0]);
         GramaticaLexer lexer = new GramaticaLexer(cs);
@@ -80,6 +80,14 @@ public class Main {
         VisitorString analisador = new VisitorString();
         analisador.visitPrograma(arvore);
         AnalisadorSemanticoLib.errosSemanticos.forEach((s) -> pw.println(s));
+        
+        return arvore;
+    }
+    
+    public static void geracaoCodigoC(String args[], PrintWriter pw, ProgramaContext arvore) throws IOException {
+        GeradorCodigoC gerador = new GeradorCodigoC();
+        gerador.visitPrograma(arvore);
+        pw.print(gerador.saida.toString());
     }
 
     public static void main(String args[]) {
@@ -93,7 +101,9 @@ public class Main {
                 analiseSintatica(args, pw);
             }
             
-            analiseSemantica(args, pw);
+            ProgramaContext arvore = analiseSemantica(args, pw);
+            
+            geracaoCodigoC(args, pw, arvore);
 
             pw.println("Fim da compilacao"); // mensagem final do arquivo de log de análise léxica e sintática
 
