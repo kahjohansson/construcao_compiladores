@@ -52,6 +52,7 @@ public class Main {
 
         return error;
     }
+    
 
     public static void analiseSintatica(String args[], PrintWriter pw) throws IOException {
 
@@ -70,7 +71,7 @@ public class Main {
         }
     }
 
-    public static ProgramaContext analiseSemantica(String args[], PrintWriter pw) throws IOException {
+    public static boolean analiseSemantica(String args[], PrintWriter pw) throws IOException {
 
         CharStream cs = CharStreams.fromFileName(args[0]);
         GramaticaLexer lexer = new GramaticaLexer(cs);
@@ -81,11 +82,16 @@ public class Main {
         analisador.visitPrograma(arvore);
         AnalisadorSemanticoLib.errosSemanticos.forEach((s) -> pw.println(s));
         
-        return arvore;
+        return ! AnalisadorSemanticoLib.errosSemanticos.isEmpty();
     }
     
-    public static void geracaoCodigoC(String args[], PrintWriter pw, ProgramaContext arvore) throws IOException {
+    public static void geracaoCodigoC(String args[], PrintWriter pw) throws IOException {
         GeradorCodigoC gerador = new GeradorCodigoC();
+        CharStream cs = CharStreams.fromFileName(args[0]);
+        GramaticaLexer lexer = new GramaticaLexer(cs);
+        CommonTokenStream tokens = new CommonTokenStream(lexer);
+        GramaticaParser parser = new GramaticaParser(tokens);
+        ProgramaContext arvore = parser.programa();
         gerador.visitPrograma(arvore);
         pw.print(gerador.saida.toString());
     }
@@ -101,11 +107,16 @@ public class Main {
                 analiseSintatica(args, pw);
             }
             
-            ProgramaContext arvore = analiseSemantica(args, pw);
+            error = analiseSemantica(args, pw);
+            if (error){
+                pw.println("Fim da compilacao");
+            }
             
-            geracaoCodigoC(args, pw, arvore);
+            if(!error){
+                geracaoCodigoC(args, pw);
+            }
 
-            pw.println("Fim da compilacao"); // mensagem final do arquivo de log de análise léxica e sintática
+             // mensagem final do arquivo de log de análise léxica e sintática
 
         } catch (Exception e) {
 

@@ -2,7 +2,6 @@ package br.ufscar.dc.compiladores.analisador.semantico;
 
 import br.ufscar.dc.compiladores.analisador.semantico.TabelaSimbolos.TipoLA;
 import br.ufscar.dc.compiladores.analisador.semantico.TabelaSimbolos.TipoETS;
-import org.antlr.v4.runtime.Token;
 
 public class VisitorString extends GramaticaBaseVisitor<Void> {
 

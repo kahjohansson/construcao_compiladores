@@ -118,8 +118,8 @@ corpo: declaracao_local* cmd*;
 // COMANDOS
 cmd: cmdLeia | cmdEscreva | cmdSe | cmdCaso | cmdPara | cmdEnquanto | cmdFaca | cmdAtribuicao | cmdChamada | cmdRetorne;
 cmdLeia: 'leia' '(' '^'? identificador ( ',' '^'? identificador)* ')';
-cmdEscreva: 'escreva' '(' expressao ( ',' expressao)* ')';
-cmdSe: 'se' expressao 'entao' cmd* ('senao' cmd*)? 'fim_se';
+cmdEscreva: 'escreva' '(' exp1=expressao ( ',' expLista+=expressao)* ')';
+cmdSe: 'se' expressao 'entao' cmdEntao+=cmd* ('senao' cmdSenao+=cmd*)? 'fim_se';
 cmdCaso: 'caso' exp_aritmetica 'seja' selecao ('senao' cmd*)? 'fim_caso';
 cmdPara: 'para' IDENT '<-' exp_aritmetica 'ate' exp_aritmetica 'faca' cmd* 'fim_para';
 cmdEnquanto: 'enquanto' expressao 'faca' cmd* 'fim_enquanto';
@@ -133,7 +133,7 @@ selecao: item_selecao*;
 item_selecao: constantes ':' cmd*;
 
 // EXPRESSOES E OPERADORES
-constantes: numero_intervalo ('..' numero_intervalo)*;
+constantes: limiteEsq=numero_intervalo ('..' limiteDireita+=numero_intervalo)*;
 numero_intervalo: op_unario? NUM_INT ('. .' op_unario? NUM_INT)?;
 op_unario: '-';
 exp_aritmetica: termo (op1 termo)*;

@@ -20,7 +20,10 @@ class GeradorCodigoCLib {
             return "d";
         }else if(tipo.equals("float")){
             return "f";
+        }else if(tipo.equals("char")){
+            return "s";
         }
+        
         return null;
     }
     
@@ -29,6 +32,8 @@ class GeradorCodigoCLib {
             return "d";
         }else if(tipoLa == TipoLA.REAL){
             return "f";
+        }else if(tipoLa == TipoLA.LITERAL){
+            return "s";
         }
         return null;
     }
