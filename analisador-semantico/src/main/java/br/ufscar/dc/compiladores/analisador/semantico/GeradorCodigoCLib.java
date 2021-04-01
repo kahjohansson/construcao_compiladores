@@ -15,6 +15,17 @@ class GeradorCodigoCLib {
         return null;
     }
     
+    public String getTipo(String tipo){
+        if(tipo.equals("inteiro")){
+            return "int";
+        }else if(tipo.equals("literal")){
+            return "char";
+        }else if(tipo.equals("real")){
+            return "float";
+        }
+        return null;
+    }
+    
     public String getCodigoTipo(String tipo){
         if(tipo.equals("int")){
             return "d";

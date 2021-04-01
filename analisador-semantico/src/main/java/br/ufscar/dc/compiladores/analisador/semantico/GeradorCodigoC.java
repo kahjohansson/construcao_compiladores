@@ -29,6 +29,18 @@ public class GeradorCodigoC extends GramaticaBaseVisitor<Void> {
     }
     
     @Override
+    public Void visitDeclaracao_local(GramaticaParser.Declaracao_localContext ctx){
+        
+        if(ctx.valor_constante() != null){
+            saida.append("#define " + ctx.IDENT().getText() + " "+ ctx.valor_constante().getText() + "\n");
+        }
+        
+        super.visitDeclaracao_local(ctx);
+        
+        return null;
+    }
+    
+    @Override
     public Void visitVariavel(GramaticaParser.VariavelContext ctx){
         
         TabelaSimbolos escopoAtual = escopos.obterEscopoAtual();
@@ -81,14 +93,14 @@ public class GeradorCodigoC extends GramaticaBaseVisitor<Void> {
     @Override
     public Void visitCmdEscreva(GramaticaParser.CmdEscrevaContext ctx){
         
-        TipoLA tipoLaExp;
+        TipoLA tipoLaExp = verificadorTipo.verificaTipo(ctx.expressao(0));
         String codTipoExp;
         String nomeVariaveis = "";
-        
+         
         saida.append("printf(\"");
         
         if(ctx.expLista.isEmpty()){ //só possui uma expressão como argumento
-            tipoLaExp = verificadorTipo.verificaTipo(ctx.expressao(0));
+            
             if(tipoLaExp == TipoLA.LITERAL){
                 saida.append(ctx.exp1.getText().replace("\"", "") + "\");\n");
             }else{
@@ -97,14 +109,22 @@ public class GeradorCodigoC extends GramaticaBaseVisitor<Void> {
             }
         
         }else{
-            saida.append(ctx.exp1.getText().replace("\"", ""));
-            for(GramaticaParser.ExpressaoContext ectx : ctx.expLista){
-                tipoLaExp = verificadorTipo.verificaTipo(ectx);
+            TipoLA tipoSegundaExpressao = verificadorTipo.verificaTipo(ctx.expressao(1));
+            
+            if((tipoLaExp == TipoLA.INTEIRO || tipoLaExp == TipoLA.REAL) && (tipoSegundaExpressao == TipoLA.LITERAL)){
                 codTipoExp = geradorLib.getCodigoTipo(tipoLaExp);
-                nomeVariaveis += " , " + ectx.getText();
-                saida.append(" %" + codTipoExp + " \"");
+                saida.append("%" + codTipoExp + "\", " + ctx.exp1.getText() + ");\n");
+                saida.append("printf(" + ctx.expressao(1).getText() + ");\n");
+            }else{
+                saida.append(ctx.exp1.getText().replace("\"", ""));
+                for(GramaticaParser.ExpressaoContext ectx : ctx.expLista){
+                    tipoLaExp = verificadorTipo.verificaTipo(ectx);
+                    codTipoExp = geradorLib.getCodigoTipo(tipoLaExp);
+                    nomeVariaveis += " , " + ectx.getText();
+                    saida.append(" %" + codTipoExp + " \"");
+                }
+                saida.append(nomeVariaveis + ");\n");
             }
-            saida.append(nomeVariaveis + ");\n");
             
         }
         
@@ -197,6 +217,58 @@ public class GeradorCodigoC extends GramaticaBaseVisitor<Void> {
         for (GramaticaParser.CmdContext cctx : ctx.cmd()) {
             visitCmd(cctx);
         }
+        saida.append("}\n");
+        
+        return null;
+    }
+    
+    @Override
+    public Void visitCmdPara(GramaticaParser.CmdParaContext ctx){
+        
+        String nomeVariavel, limitanteEsquerda, limitanteDireita;
+        
+        nomeVariavel = ctx.IDENT().getText();
+        limitanteEsquerda = ctx.exp_aritmetica(0).getText();
+        limitanteDireita = ctx.exp_aritmetica(1).getText();
+        
+        saida.append("for(" + nomeVariavel + " = " + limitanteEsquerda + "; " + nomeVariavel + " <= " + limitanteDireita +
+                "; " + nomeVariavel + "++){\n");
+        
+        for(GramaticaParser.CmdContext cctx : ctx.cmd()){
+            visitCmd(cctx);
+        }
+        
+        saida.append("}\n");
+        
+        return null;
+    }
+    
+    @Override
+    public Void visitDeclaracao_global(GramaticaParser.Declaracao_globalContext ctx){
+        
+        TabelaSimbolos escopoAtual = escopos.obterEscopoAtual();
+        String tipo, nomeVariaveis;
+        
+        
+        saida.append("void " + ctx.IDENT().getText());
+        
+        if(ctx.parametros() != null){
+            for(GramaticaParser.ParametroContext pctx : ctx.parametros().parametro()){
+                tipo = geradorLib.getTipo(pctx.tipo_estendido().getText());
+                nomeVariaveis = "";
+                for(GramaticaParser.IdentificadorContext ictx : pctx.identificador()){
+                    nomeVariaveis += ictx.getText();
+                }
+                saida.append(nomeVariaveis + " : " + tipo);
+            }
+        }
+        
+        saida.append("({\n");
+        
+        for(GramaticaParser.CmdContext cctx : ctx.cmd()){
+            visitCmd(cctx);
+        }
+        
         saida.append("}\n");
         
         return null;
