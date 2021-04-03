@@ -16,5 +16,12 @@ public class AnalisadorSemanticoLib {
     public static TabelaSimbolos.TipoLA verificarTipo(TabelaSimbolos tabela, String nomeVar) {
         return tabela.verificar(nomeVar);
     }
+        
+    public static String getNomeRegistro(String nomeVariavelCompleto){
+        return nomeVariavelCompleto.substring(0, nomeVariavelCompleto.indexOf("."));
+    }
     
+    public static String getNomeVariavel(String nomeVariavelCompleto){
+        return nomeVariavelCompleto.substring(nomeVariavelCompleto.indexOf(".")+1);
+    }
 }
