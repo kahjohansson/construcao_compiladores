@@ -119,7 +119,7 @@ public class Main {
              // mensagem final do arquivo de log de análise léxica e sintática
 
         } catch (Exception e) {
-
+            e.printStackTrace();
         }
     }
 }
