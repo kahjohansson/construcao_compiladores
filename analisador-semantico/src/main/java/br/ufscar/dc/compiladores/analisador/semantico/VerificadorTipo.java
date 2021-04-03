@@ -1,7 +1,6 @@
 package br.ufscar.dc.compiladores.analisador.semantico;
 
 import br.ufscar.dc.compiladores.analisador.semantico.TabelaSimbolos.TipoLA;
-import org.antlr.v4.runtime.Token;
 
 public class VerificadorTipo {
     
@@ -116,10 +115,15 @@ public class VerificadorTipo {
     private TipoLA verificaTipo(GramaticaParser.Parcela_unarioContext ctx) {
         
         if(ctx.identificador() != null) {
-            //TODO buscar nas tabelas de símbolos
             return verificaTipo(ctx.identificador());
         } else if(ctx.IDENT() != null) {
             //TODO buscar o tipo de retorno nas tabelas de símbolo
+            for(TabelaSimbolos ts : escopos.percorrerEscoposAninhados()) {
+                if(ts.existe(ctx.IDENT().getText())){
+                    return ts.verificar(ctx.IDENT().getText());
+                }
+            }
+            return TipoLA.INVALIDO;
         }else if(ctx.NUM_INT() != null) {
             return TipoLA.INTEIRO;
         }else if(ctx.NUM_REAL() != null) {
@@ -139,11 +143,13 @@ public class VerificadorTipo {
     
     public TipoLA verificaTipo(GramaticaParser.IdentificadorContext ctx) {
        
+//        AnalisadorSemanticoLib.adicionarErroSemantico("chegou no verifica tipo de identificador");
+        
         TabelaSimbolos subtabela = null;
         TipoLA tipoLa = TipoLA.INVALIDO;
         
-        //se é uma variável do tipo básico
-        if(ctx.identLista != null && !ctx.identLista.isEmpty() ){
+        //é um registro
+        if(!ctx.identLista.isEmpty() ){
             for(TabelaSimbolos ts : escopos.percorrerEscoposAninhados()) {
                 if(ts.existe(ctx.ident1.getText())){
                     subtabela = ts.getSubTabela(ctx.ident1.getText());
@@ -153,7 +159,7 @@ public class VerificadorTipo {
                 }
             }
             
-        //é um registro
+        //se é uma variável do tipo básico
         }else{
             for(TabelaSimbolos ts : escopos.percorrerEscoposAninhados()) {
                 if(ts.existe(ctx.ident1.getText())){
