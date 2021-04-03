@@ -15,6 +15,31 @@ class GeradorCodigoCLib {
         return null;
     }
     
+    // retorna tipo TipoLA dada uma string
+    public TipoLA getTipoLa(String tipo) {
+        
+        TipoLA tipoLa = TipoLA.INVALIDO;
+        
+        switch (tipo){
+            case "literal":
+                tipoLa = TipoLA.LITERAL;
+                break;
+            case "inteiro":
+                tipoLa = TipoLA.INTEIRO;
+                break;
+            case "real":
+                tipoLa = TipoLA.REAL;
+                break;
+            case "logico":
+                tipoLa = TipoLA.LOGICO;
+                break;
+            default:
+                break;
+        }
+        
+        return tipoLa;
+    }
+    
     public String getTipo(String tipo){
         if(tipo.equals("inteiro")){
             return "int";

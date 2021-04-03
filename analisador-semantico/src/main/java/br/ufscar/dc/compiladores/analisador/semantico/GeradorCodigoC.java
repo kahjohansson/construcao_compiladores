@@ -25,7 +25,7 @@ public class GeradorCodigoC extends GramaticaBaseVisitor<Void> {
         saida.append("int main() {\n");
         visitCorpo(ctx.corpo());
         saida.append("return 0;\n");
-        saida.append("}");
+        saida.append("}\n");
         return null;
     }
 
@@ -96,7 +96,7 @@ public class GeradorCodigoC extends GramaticaBaseVisitor<Void> {
                 } else {
                     escopoAtual.adicionar(nomeVar, tipoVarLa, TipoETS.VARIAVEL, null, false);
                 }
-                
+
                 if (tipoVarLa == TipoLA.LITERAL) {
                     saida.append(tipoVar + " " + nomeVar + "[80];\n");
                 } else {
@@ -156,27 +156,26 @@ public class GeradorCodigoC extends GramaticaBaseVisitor<Void> {
 
             escreva(ctx.exp1);
 
-        } else if (ctx.expLista.size() == 1) {
-
-            saida.append("printf(\"");
-
-            TipoLA tipoSegundaExpressao = verificadorTipo.verificaTipo(ctx.expressao(1));
-
-            if ((tipoLaExp == TipoLA.INTEIRO || tipoLaExp == TipoLA.REAL) && (tipoSegundaExpressao == TipoLA.LITERAL)) {
-                codTipoExp = geradorLib.getCodigoTipo(tipoLaExp);
-                saida.append("%" + codTipoExp + "\", " + ctx.exp1.getText() + ");\n");
-                saida.append("printf(" + ctx.expressao(1).getText() + ");\n");
-            } else {
-                saida.append(ctx.exp1.getText().replace("\"", ""));
-                for (GramaticaParser.ExpressaoContext ectx : ctx.expLista) {
-                    tipoLaExp = verificadorTipo.verificaTipo(ectx);
-                    codTipoExp = geradorLib.getCodigoTipo(tipoLaExp);
-                    nomeVariaveis += " , " + ectx.getText();
-                    saida.append(" %" + codTipoExp + " \"");
-                }
-                saida.append(nomeVariaveis + ");\n");
-            }
-
+//        } else if (ctx.expLista.size() == 1) {
+//
+//            saida.append("printf(\"");
+//
+//            TipoLA tipoSegundaExpressao = verificadorTipo.verificaTipo(ctx.expressao(1));
+//
+//            if ((tipoLaExp == TipoLA.INTEIRO || tipoLaExp == TipoLA.REAL) && (tipoSegundaExpressao == TipoLA.LITERAL)) {
+//                codTipoExp = geradorLib.getCodigoTipo(tipoLaExp);
+//                saida.append("%" + codTipoExp + "\", " + ctx.exp1.getText() + ");\n");
+//                saida.append("printf(" + ctx.expressao(1).getText() + ");\n");
+//            } else {
+//                saida.append(ctx.exp1.getText().replace("\"", ""));
+//                for (GramaticaParser.ExpressaoContext ectx : ctx.expLista) {
+//                    tipoLaExp = verificadorTipo.verificaTipo(ectx);
+//                    codTipoExp = geradorLib.getCodigoTipo(tipoLaExp);
+//                    nomeVariaveis += " , " + ectx.getText();
+//                    saida.append(" %" + codTipoExp + " \"");
+//                }
+//                saida.append(nomeVariaveis + ");\n");
+//            }
         } else {
             for (GramaticaParser.ExpressaoContext ectx : ctx.expressao()) {
                 escreva(ectx);
@@ -190,16 +189,20 @@ public class GeradorCodigoC extends GramaticaBaseVisitor<Void> {
 
         saida.append("printf(\"");
 
+        //se for literal passada explicitamente
         if (ctx.getText().contains("\"")) {
             saida.append(ctx.getText().replace("\"", "") + "\");\n");
-        } else {
+        } //se for variavel
+        else {
 
             TipoLA tipoLaExp = verificadorTipo.verificaTipo(ctx);
             String codTipoExp;
 
+            //literal
             if (tipoLaExp == TipoLA.LITERAL) {
                 saida.append("%s" + "\", " + ctx.getText() + ");\n");
-            } else {
+            } //inteiro, real ou lógico
+            else {
                 codTipoExp = geradorLib.getCodigoTipo(tipoLaExp);
                 saida.append("%" + codTipoExp + "\", " + ctx.getText() + ");\n");
             }
@@ -258,6 +261,16 @@ public class GeradorCodigoC extends GramaticaBaseVisitor<Void> {
         }
 
         super.visitFator_logico(ctx);
+
+        return null;
+    }
+
+    @Override
+    public Void visitOp2(GramaticaParser.Op2Context ctx) {
+
+        saida.append(ctx.getText());
+
+        super.visitOp2(ctx);
 
         return null;
     }
@@ -343,7 +356,7 @@ public class GeradorCodigoC extends GramaticaBaseVisitor<Void> {
     public Void visitCmdEnquanto(GramaticaParser.CmdEnquantoContext ctx) {
 
         saida.append("while(");
-        visitExpressao(ctx.expressao());
+        super.visitExpressao(ctx.expressao());
         saida.append("){\n");
         for (GramaticaParser.CmdContext cctx : ctx.cmd()) {
             super.visitCmd(cctx);
@@ -392,9 +405,17 @@ public class GeradorCodigoC extends GramaticaBaseVisitor<Void> {
     public Void visitDeclaracao_global(GramaticaParser.Declaracao_globalContext ctx) {
 
         TabelaSimbolos escopoAtual = escopos.obterEscopoAtual();
+        escopos.criarNovoEscopo();
+        TabelaSimbolos escopoParametros = escopos.obterEscopoAtual();
         String tipo, nomeVariaveis;
 
-        saida.append("void " + ctx.IDENT().getText());
+        if (ctx.tipo_estendido() != null) {
+            saida.append(geradorLib.getTipo(ctx.tipo_estendido().getText()));
+        } else {
+            saida.append("void");
+        }
+
+        saida.append(" " + ctx.IDENT().getText() + "(");
 
         if (ctx.parametros() != null) {
             for (GramaticaParser.ParametroContext pctx : ctx.parametros().parametro()) {
@@ -402,18 +423,63 @@ public class GeradorCodigoC extends GramaticaBaseVisitor<Void> {
                 nomeVariaveis = "";
                 for (GramaticaParser.IdentificadorContext ictx : pctx.identificador()) {
                     nomeVariaveis += ictx.getText();
+                    escopoParametros.adicionar(ictx.getText(), geradorLib.getTipoLa(pctx.tipo_estendido().getText()), TipoETS.VARIAVEL, null, false);
                 }
-                saida.append(nomeVariaveis + " : " + tipo);
+                if (tipo == "char") {
+                    tipo = "char*";
+                }
+                saida.append(tipo + " " + nomeVariaveis);
+
             }
         }
 
-        saida.append("({\n");
+        saida.append(") {\n");
+
+        //função
+        if (ctx.tipo_estendido() != null) {
+            escopoAtual.adicionar(ctx.IDENT().getText(), geradorLib.getTipoLa(ctx.tipo_estendido().getText()), TipoETS.FUNCAO, escopoParametros, false);
+        } //procedimento
+        else {
+            escopoAtual.adicionar(ctx.IDENT().getText(), TipoLA.SEMTIPO, TipoETS.PROCEDIMENTO, escopoParametros, false);
+        }
 
         for (GramaticaParser.CmdContext cctx : ctx.cmd()) {
             visitCmd(cctx);
         }
 
         saida.append("}\n");
+
+        escopos.abandonarEscopo();
+
+        return null;
+    }
+
+    @Override
+    public Void visitCmdChamada(GramaticaParser.CmdChamadaContext ctx) {
+
+        saida.append(ctx.IDENT().getText() + "(");
+
+        int count = 0;
+
+        for (GramaticaParser.ExpressaoContext ectx : ctx.expressao()) {
+            if (count >= 1) {
+                saida.append(", ");
+            }
+            saida.append(ectx.getText());
+            count += 1;
+        }
+
+        saida.append(");\n");
+
+        return null;
+    }
+
+    @Override
+    public Void visitCmdRetorne(GramaticaParser.CmdRetorneContext ctx) {
+
+        saida.append("return ");
+        super.visitExpressao(ctx.expressao());
+        saida.append(";\n");
 
         return null;
     }
