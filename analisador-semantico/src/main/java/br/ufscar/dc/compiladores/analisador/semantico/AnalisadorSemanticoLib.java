@@ -18,10 +18,39 @@ public class AnalisadorSemanticoLib {
     }
         
     public static String getNomeRegistro(String nomeVariavelCompleto){
-        return nomeVariavelCompleto.substring(0, nomeVariavelCompleto.indexOf("."));
+        if(nomeVariavelCompleto.contains("."))
+            return nomeVariavelCompleto.substring(0, nomeVariavelCompleto.indexOf("."));
+        return null;
     }
     
     public static String getNomeVariavel(String nomeVariavelCompleto){
-        return nomeVariavelCompleto.substring(nomeVariavelCompleto.indexOf(".")+1);
+        if(nomeVariavelCompleto.contains("."))
+            return nomeVariavelCompleto.substring(nomeVariavelCompleto.indexOf(".")+1);
+        return nomeVariavelCompleto;
+    }
+    
+        // retorna tipo TipoLA dada uma string
+    public TipoLA getTipoLa(String tipo) {
+        
+        TipoLA tipoLa = TipoLA.INVALIDO;
+        
+        switch (tipo){
+            case "literal":
+                tipoLa = TipoLA.LITERAL;
+                break;
+            case "inteiro":
+                tipoLa = TipoLA.INTEIRO;
+                break;
+            case "real":
+                tipoLa = TipoLA.REAL;
+                break;
+            case "logico":
+                tipoLa = TipoLA.LOGICO;
+                break;
+            default:
+                break;
+        }
+        
+        return tipoLa;
     }
 }
