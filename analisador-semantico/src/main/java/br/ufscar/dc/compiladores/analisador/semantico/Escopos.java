@@ -28,4 +28,8 @@ public class Escopos {
     public void abandonarEscopo() {
         pilhaDeTabelas.pop();
     }
+    
+    public void adicionarEscopo(TabelaSimbolos tabela){
+        pilhaDeTabelas.push(tabela);
+    }
 }
