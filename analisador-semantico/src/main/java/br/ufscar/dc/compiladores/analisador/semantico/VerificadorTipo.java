@@ -117,12 +117,7 @@ public class VerificadorTipo {
         
         if(ctx.identificador() != null) {
             //TODO buscar nas tabelas de símbolos
-            for(TabelaSimbolos ts : escopos.percorrerEscoposAninhados()) {
-                if(ts.existe(ctx.identificador().getText())){
-                    return ts.verificar(ctx.identificador().getText());
-                }
-            }
-            return TipoLA.INVALIDO;
+            return verificaTipo(ctx.identificador());
         } else if(ctx.IDENT() != null) {
             //TODO buscar o tipo de retorno nas tabelas de símbolo
         }else if(ctx.NUM_INT() != null) {
@@ -143,21 +138,27 @@ public class VerificadorTipo {
     }
     
     public TipoLA verificaTipo(GramaticaParser.IdentificadorContext ctx) {
-        
-        TabelaSimbolos escopoAtual = escopos.obterEscopoAtual();
+       
         TabelaSimbolos subtabela = null;
         TipoLA tipoLa = TipoLA.INVALIDO;
         
-        if(ctx.identLista != null){
-            if(escopoAtual.existe(ctx.ident1.getText())){
-                subtabela = escopoAtual.getSubTabela(ctx.ident1.getText());
-                tipoLa = subtabela.verificar(ctx.identLista.get(0).getText().toString());
+        //se é uma variável do tipo básico
+        if(ctx.identLista != null && !ctx.identLista.isEmpty() ){
+            for(TabelaSimbolos ts : escopos.percorrerEscoposAninhados()) {
+                if(ts.existe(ctx.ident1.getText())){
+                    subtabela = ts.getSubTabela(ctx.ident1.getText());
+                    if(subtabela != null){
+                        tipoLa = subtabela.verificar(ctx.identLista.get(0).getText());
+                    }
+                }
             }
             
+        //é um registro
         }else{
-            
-            if(escopoAtual.existe(ctx.ident1.getText())){
-                tipoLa = escopoAtual.verificar(ctx.ident1.getText());
+            for(TabelaSimbolos ts : escopos.percorrerEscoposAninhados()) {
+                if(ts.existe(ctx.ident1.getText())){
+                    tipoLa = ts.verificar(ctx.ident1.getText());
+                }
             }
         }
         
