@@ -106,7 +106,7 @@ registro: 'registro' variavel* 'fim_registro';
 
 // DECLARACAO GLOBAL
 declaracao_global: 'procedimento' IDENT '(' parametros? ')' declaracao_local* cmd* 'fim_procedimento'
-		           | 'funcao' IDENT '(' parametros? ')' ':' tipo_estendido declaracao_local* cmd* 'fim_funcao' ;
+		           | funcao='funcao' IDENT '(' parametros? ')' ':' tipo_estendido declaracao_local* cmd* 'fim_funcao' ;
 
 // PARAMETROS
 parametro: 'var'? identificador ( ',' identificador)* ':' tipo_estendido;
@@ -146,7 +146,7 @@ op3: '%';
 // PARCELA
 parcela: op_unario? parcela_unario | parcela_nao_unario;
 parcela_unario: '^'? identificador |
-                IDENT '(' expressao (',' expressao)? ')' |
+                ident=IDENT '(' expressao (',' expressao)? ')' |
                 NUM_INT |
                 NUM_REAL |
                 '(' expParenteses=expressao ')';
@@ -154,10 +154,10 @@ parcela_nao_unario: '&' identificador | CADEIA;
 
 // EXPRESSOES E OPERADORES RELACIONAIS
 exp_relacional: exp_aritmetica (op_relacional exp_aritmetica)?;
-op_relacional: '=' | '<>' | '>=' | '<=' | '>' | '<';
+op_relacional: igual='=' | '<>' | '>=' | '<=' | '>' | '<';
 expressao: termo_logico (op_logico_1 termo_logico)*;
 termo_logico: fator_logico (op_logico_2 fator_logico)*;
-fator_logico: 'nao'? parcela_logica;
+fator_logico: nao='nao'? parcela_logica;
 parcela_logica: ( 'verdadeiro' | 'falso' ) | exp_relacional;
 op_logico_1: 'ou';
 op_logico_2: 'e';
