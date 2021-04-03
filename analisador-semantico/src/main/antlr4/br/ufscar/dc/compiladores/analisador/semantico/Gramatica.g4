@@ -105,7 +105,7 @@ valor_constante: CADEIA | NUM_INT | NUM_REAL | 'verdadeiro' | 'falso';
 registro: 'registro' variavel* 'fim_registro';
 
 // DECLARACAO GLOBAL
-declaracao_global: 'procedimento' IDENT '(' parametros? ')' declaracao_local* cmd* 'fim_procedimento'
+declaracao_global: procedimento='procedimento' IDENT '(' parametros? ')' declaracao_local* cmd* 'fim_procedimento'
 		           | funcao='funcao' IDENT '(' parametros? ')' ':' tipo_estendido declaracao_local* cmd* 'fim_funcao' ;
 
 // PARAMETROS
