@@ -142,8 +142,6 @@ public class VerificadorTipo {
     }
     
     public TipoLA verificaTipo(GramaticaParser.IdentificadorContext ctx) {
-       
-//        AnalisadorSemanticoLib.adicionarErroSemantico("chegou no verifica tipo de identificador");
         
         TabelaSimbolos subtabela = null;
         TipoLA tipoLa = TipoLA.INVALIDO;
