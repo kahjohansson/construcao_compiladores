@@ -63,7 +63,7 @@ public class Main {
         CommonTokenStream tokens = new CommonTokenStream(lexer);
         GramaticaParser parser = new GramaticaParser(tokens); // instância do parser
 
-        ErrorListener mcel = new ErrorListener(pw); // instância do tratador de erros
+        AnalisadorSintatico mcel = new AnalisadorSintatico(pw); // instância do tratador de erros
         parser.addErrorListener(mcel);
 
         try {
@@ -83,7 +83,7 @@ public class Main {
         CommonTokenStream tokens = new CommonTokenStream(lexer);
         GramaticaParser parser = new GramaticaParser(tokens);
         ProgramaContext arvore = parser.programa();
-        VisitorString analisador = new VisitorString();
+        AnalisadorSemantico analisador = new AnalisadorSemantico();
         analisador.visitPrograma(arvore);
         AnalisadorSemanticoLib.errosSemanticos.forEach((s) -> pw.println(s));
         
