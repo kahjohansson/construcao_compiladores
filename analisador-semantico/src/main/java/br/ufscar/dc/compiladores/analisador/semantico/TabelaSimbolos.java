@@ -30,6 +30,7 @@ public class TabelaSimbolos {
     }
         
     class EntradaTabelaSimbolos {
+        
         String nome;
         TipoLA tipoLa;
         TipoETS tipoEts;
@@ -44,7 +45,6 @@ public class TabelaSimbolos {
             this.subtabela = subtabela;
             this.tiposParametros = tiposParametros;
             this.ponteiro = ponteiro;
-            //TODO adicionar lista de parametros para procedimentos e funções
         }
         
         private EntradaTabelaSimbolos(String nome, TipoLA tipoLa, TipoETS tipoEts, boolean ponteiro) {
@@ -59,30 +59,37 @@ public class TabelaSimbolos {
     
     private final Map<String, EntradaTabelaSimbolos> tabela;
     
+    //construtor
     public TabelaSimbolos() {
         this.tabela = new HashMap<>();
     }
     
+    //adiciona entrada da tabela de símbolos
     public void adicionar(String nome, TipoLA tipoLa, TipoETS tipoEts, TabelaSimbolos subtabela, boolean ponteiro) {
         tabela.put(nome, new EntradaTabelaSimbolos(nome, tipoLa, tipoEts, subtabela, ponteiro));
     }
     
+    //adiciona entrada da tabela de símbolos
     public void adicionar(String nome, TipoLA tipoLa, TipoETS tipoEts, TabelaSimbolos subtabela, List<TipoLA> tiposParametros, boolean ponteiro) {
         tabela.put(nome, new EntradaTabelaSimbolos(nome, tipoLa, tipoEts, subtabela, tiposParametros, ponteiro));
     }
     
+    //verifica se existe entrada da tabela de símbolos com chave nome
     public boolean existe(String nome) {
         return tabela.containsKey(nome);
     }
         
+    //verifica tipo LA de entrada da tabela de símbolos
     public TipoLA verificar(String nome) {
         return tabela.get(nome).tipoLa;
     }
     
+    //retorna subtabela da entrada da tabela de símbolos
     public TabelaSimbolos getSubTabela(String nome){
         return tabela.get(nome).subtabela;
     }
     
+    //retorna lista de tipos de parâmetros de função/procedimento
     public List<TipoLA> getTiposParametros(String nome){
         return tabela.get(nome).tiposParametros;
     }
@@ -112,6 +119,7 @@ public class TabelaSimbolos {
         return tipoLa;
     }
     
+    //verifica se variável é um ponteiro
     public boolean ponteiro(String texto){
         if (texto.startsWith("^") || texto.startsWith("&")){
             return true;
@@ -119,10 +127,12 @@ public class TabelaSimbolos {
         return false;
     }
     
+    //verifica se variável é um ponteiro
     public boolean verificarPonteiro(String nome){
         return tabela.get(nome).ponteiro;
     }
     
+    //verifica se variável é um ponteiro
     public boolean ponteiro(boolean simboloPonteiro, boolean identificador){
         if(simboloPonteiro && identificador) { return false; }
         else if(simboloPonteiro && !identificador) { return true;}
@@ -130,10 +140,7 @@ public class TabelaSimbolos {
         return false;
     }
     
-//    public void adicionaTipoEstendido(String tipoEstendido){
-//        tiposEstendidos.add(tipoEstendido);
-//    }
-//    
+    //verifica se existe tipo estendido
     public boolean existeTipoEstendido(String tipoEstendido){
         if(! tabela.containsKey(tipoEstendido))
             return false;

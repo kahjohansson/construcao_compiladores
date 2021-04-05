@@ -16,11 +16,13 @@ public class AnalisadorSemantico extends GramaticaBaseVisitor<Void> {
 
         TabelaSimbolos escopoAtual = escopos.obterEscopoAtual();
 
+        //declaração de constante
         if (ctx.tipo_basico() != null) {
             if (!escopoAtual.existe(ctx.IDENT().getText())) {
                 TipoLA tipoLa = escopoAtual.getTipo(ctx.tipo_basico().getText());
                 escopoAtual.adicionar(ctx.IDENT().getText(), tipoLa, TipoETS.CONSTANTE, null, false);
             }
+        //declaração de tipo
         } else if (ctx.tipo() != null) {
             if (!escopoAtual.existeTipoEstendido(ctx.IDENT().getText())) {
 
@@ -46,9 +48,11 @@ public class AnalisadorSemantico extends GramaticaBaseVisitor<Void> {
         String tipoDeclaracao;
         boolean tipoEstendidoExiste = false;
 
+        //escopo dos parâmetros e declarações locais de funções e procedimentos
         escopos.criarNovoEscopo();
         TabelaSimbolos subEscopo = escopos.obterEscopoAtual();
 
+        //determinação se é função ou procedimento
         if (ctx.funcao != null) {
             tipoDeclaracao = "funcao";
         } else {
@@ -95,9 +99,10 @@ public class AnalisadorSemantico extends GramaticaBaseVisitor<Void> {
                 tipoEts = TipoETS.PROCEDIMENTO;
             }
 
-            if (tiposParametros.isEmpty()) {
+            //cria função/procedimento
+            if (tiposParametros.isEmpty()) { //se possuir parametros
                 escopoAtual.adicionar(ctx.IDENT().getText(), tipoLa, tipoEts, null, false);
-            } else {
+            } else { //se não possuir parâmetros
                 escopoAtual.adicionar(ctx.IDENT().getText(), tipoLa, tipoEts, subEscopo, tiposParametros, false);
             }
 
@@ -106,8 +111,9 @@ public class AnalisadorSemantico extends GramaticaBaseVisitor<Void> {
                 visitDeclaracao_local(lctx);
             });
 
-            //realiza chamada de cmd
+            //realiza chamada de comandos
             for (GramaticaParser.CmdContext cctx : ctx.cmd()) {
+                //tratamento de erro de retorno em procedimento
                 if (tipoDeclaracao.equals("procedimento") && cctx.cmdRetorne() != null) {
                     String mensagem = String.format("Linha %d: comando retorne nao permitido nesse escopo", cctx.getStart().getLine());
                     AnalisadorSemanticoLib.adicionarErroSemantico(mensagem);
@@ -141,21 +147,21 @@ public class AnalisadorSemantico extends GramaticaBaseVisitor<Void> {
             escopos.abandonarEscopo();
             variavelTipo = TipoLA.REGISTRO;
 
-            //tipo estendido
+        //tipo estendido
         } else {
 
             // tipo basico
             if (ctx.tipo().tipo_estendido().tipo_basico_ident().tipo_basico() != null) {
                 variavelTipo = escopoAtual.getTipo(ctx.tipo().tipo_estendido().tipo_basico_ident().tipo_basico().getText());
 
-                // tipo IDENT (estendido)
+            // tipo IDENT (estendido)
             } else {
                 variavelTipo = TipoLA.TIPOESTENDIDO;
                 String tipoIdent = ctx.tipo().tipo_estendido().tipo_basico_ident().IDENT().getText();
                 tipoEstendidoExiste = escopoAtual.existeTipoEstendido(tipoIdent);
                 if (tipoEstendidoExiste) {
                     escopoRegistro = escopoAtual.getSubTabela(tipoIdent);
-                } else {
+                } else { //mensagem de erro de tipo estendido não declarado
                     String mensagem = String.format("Linha %d: tipo %s nao declarado",
                             ctx.getStart().getLine(),
                             tipoIdent);
@@ -172,7 +178,7 @@ public class AnalisadorSemantico extends GramaticaBaseVisitor<Void> {
             jaDeclarado = false;
 
             for (TabelaSimbolos ts : escopos.percorrerEscoposAninhados()) {
-                if (ts.existe(ictx.getText())) {
+                if (ts.existe(ictx.getText())) { //mensagem de erro para identificador já declarado anteriormente
                     jaDeclarado = true;
                     String mensagem = String.format("Linha %d: identificador %s ja declarado anteriormente",
                             ictx.getStart().getLine(),
@@ -180,7 +186,7 @@ public class AnalisadorSemantico extends GramaticaBaseVisitor<Void> {
                     AnalisadorSemanticoLib.adicionarErroSemantico(mensagem);
                 }
             }
-
+            //gravação da variável no escopo
             if (!jaDeclarado) {
                 escopoAtual.adicionar(AnalisadorSemanticoLib.getNomeVariavel(ictx), variavelTipo, TipoETS.VARIAVEL, escopoRegistro, ponteiro);
             }
@@ -193,6 +199,7 @@ public class AnalisadorSemantico extends GramaticaBaseVisitor<Void> {
     @Override
     public Void visitCmdLeia(GramaticaParser.CmdLeiaContext ctx) {
 
+        //mensagem de erro se identificador já tiver sido declarado anteriormente
         for (GramaticaParser.IdentificadorContext ictx : ctx.identificador()) {
 
             boolean erro = true;
@@ -212,23 +219,6 @@ public class AnalisadorSemantico extends GramaticaBaseVisitor<Void> {
         }
 
         return super.visitCmdLeia(ctx);
-    }
-
-    @Override
-    public Void visitParcela_nao_unario(GramaticaParser.Parcela_nao_unarioContext ctx) {
-
-        TabelaSimbolos escopoAtual = escopos.obterEscopoAtual();
-
-        if (ctx.identificador() != null) {
-            if (!escopoAtual.existe(AnalisadorSemanticoLib.getNomeVariavel(ctx.identificador().getText()))) {
-                String mensagem = String.format("Linha %d: identificador %s nao declarado",
-                        ctx.identificador().getStart().getLine(),
-                        ctx.identificador().getText());
-                AnalisadorSemanticoLib.adicionarErroSemantico(mensagem);
-            }
-        }
-
-        return super.visitParcela_nao_unario(ctx);
     }
 
     @Override
@@ -277,17 +267,15 @@ public class AnalisadorSemantico extends GramaticaBaseVisitor<Void> {
 
             }
 
-            //chamada de função ou procedimento
+        //chamada de função ou procedimento
         } else if (ctx.ident != null) {
-
-            TabelaSimbolos tabelaParametros;
-            List<TipoLA> tiposParametros = new ArrayList<>();
+            
+            List<TipoLA> tiposParametros;
 
             for (TabelaSimbolos ts : escopos.percorrerEscoposAninhados()) {
 
                 if (ts.existe(ctx.IDENT().getText())) {
                     tiposParametros = ts.getTiposParametros(ctx.IDENT().getText());
-                    tabelaParametros = ts.getSubTabela(ctx.IDENT().getText());
 
                     //erro de quantidade de parametros diferente
                     if (tiposParametros.size() != ctx.expressao().size()) {
@@ -320,24 +308,26 @@ public class AnalisadorSemantico extends GramaticaBaseVisitor<Void> {
     @Override
     public Void visitCmdAtribuicao(GramaticaParser.CmdAtribuicaoContext ctx) {
 
+        //verificação de tipos de identificador e expressão
         TipoLA tipoIdentificador = verificadorTipo.verificaTipo(ctx.identificador());
         TipoLA tipoExpressao = verificadorTipo.verificaTipo(ctx.expressao());
 
         boolean condicao;
         boolean identificadorInvalido = tipoIdentificador == TipoLA.INVALIDO;
         
+        //erro de identificador invalido
         if(identificadorInvalido){
             String mensagem = String.format("Linha %d: identificador %s nao declarado",
                         ctx.getStart().getLine(), ctx.identificador().getText());
             AnalisadorSemanticoLib.adicionarErroSemantico(mensagem);
         }
         
-        condicao = (tipoExpressao == TipoLA.INVALIDO) //identificador e expressao invalidos
+        condicao = (tipoExpressao == TipoLA.INVALIDO) //expressao invalidos
                 || (tipoIdentificador != tipoExpressao //tipos diferentes
                 && !(tipoIdentificador == TipoLA.REAL && tipoExpressao == TipoLA.INTEIRO) //identificador real e expressao inteira
                 );
 
-        if (!identificadorInvalido && condicao) {
+        if (!identificadorInvalido && condicao) { //dispara erros listados em 'condicao'
             String mensagem;
             if (ctx.simbolo == null) {
                 mensagem = String.format("Linha %d: atribuicao nao compativel para %s",
@@ -355,6 +345,7 @@ public class AnalisadorSemantico extends GramaticaBaseVisitor<Void> {
     @Override
     public Void visitCorpo(GramaticaParser.CorpoContext ctx) {
 
+        //erro de retorno não permitido em corpo do algoritmo
         for (GramaticaParser.CmdContext cctx : ctx.cmd()) {
             if (cctx.cmdRetorne() != null) {
                 String mensagem = String.format("Linha %d: comando retorne nao permitido nesse escopo",

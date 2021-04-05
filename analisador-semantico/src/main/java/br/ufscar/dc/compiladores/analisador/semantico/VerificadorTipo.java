@@ -17,7 +17,6 @@ public class VerificadorTipo {
             TipoLA tipo = verificaTipo(tctx);
             if (tipo != ret){
                 return TipoLA.INVALIDO;
-                //TODO tratar erro semântico
             }
         }
         
@@ -31,7 +30,6 @@ public class VerificadorTipo {
             TipoLA tipo = verificaTipo(fctx);
             if (tipo != ret){
                 return TipoLA.INVALIDO;
-                //TODO tratar erro semântico
             }
         }
         
@@ -68,7 +66,6 @@ public class VerificadorTipo {
             TipoLA tipo = verificaTipo(tctx);
             if (tipo != ret && !((ret == TipoLA.INTEIRO && tipo == TipoLA.REAL) || (ret == TipoLA.REAL && tipo == TipoLA.INTEIRO))){ //TODO caso necessário, testar a compatibilidade
                 return TipoLA.INVALIDO;
-                //TODO tratar erro semântico
             }
         }
         
@@ -82,7 +79,6 @@ public class VerificadorTipo {
             TipoLA tipo = verificaTipo(fctx);
             if (tipo != ret && !((ret == TipoLA.INTEIRO && tipo == TipoLA.REAL) || (ret == TipoLA.REAL && tipo == TipoLA.INTEIRO))){ //TODO caso necessário, testar a compatibilidade
                 return TipoLA.INVALIDO;
-                //TODO tratar erro semântico
             }
         }
         
@@ -94,9 +90,8 @@ public class VerificadorTipo {
         
         for (GramaticaParser.ParcelaContext pctx : ctx.parcela()) {
             TipoLA tipo = verificaTipo(pctx);
-            if (tipo != ret){ //TODO caso necessário, testar a compatibilidade
+            if (tipo != ret){
                 return TipoLA.INVALIDO;
-                //TODO tratar erro semântico
             }
         }
         
@@ -117,7 +112,6 @@ public class VerificadorTipo {
         if(ctx.identificador() != null) {
             return verificaTipo(ctx.identificador());
         } else if(ctx.IDENT() != null) {
-            //TODO buscar o tipo de retorno nas tabelas de símbolo
             for(TabelaSimbolos ts : escopos.percorrerEscoposAninhados()) {
                 if(ts.existe(ctx.IDENT().getText())){
                     return ts.verificar(ctx.IDENT().getText());
