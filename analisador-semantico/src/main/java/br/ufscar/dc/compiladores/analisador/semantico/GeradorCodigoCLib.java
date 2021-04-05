@@ -71,6 +71,6 @@ class GeradorCodigoCLib {
         }else if(tipoLa == TipoLA.LITERAL){
             return "s";
         }
-        return null;
+        return "d";
     }
 }
