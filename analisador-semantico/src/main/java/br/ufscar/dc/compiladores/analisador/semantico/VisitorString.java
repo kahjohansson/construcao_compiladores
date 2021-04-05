@@ -118,7 +118,6 @@ public class VisitorString extends GramaticaBaseVisitor<Void> {
             escopos.abandonarEscopo();
 
         }
-
         return null;
     }
 
@@ -141,14 +140,14 @@ public class VisitorString extends GramaticaBaseVisitor<Void> {
             escopos.abandonarEscopo();
             variavelTipo = TipoLA.REGISTRO;
 
-        //tipo estendido
+            //tipo estendido
         } else {
 
             // tipo basico
             if (ctx.tipo().tipo_estendido().tipo_basico_ident().tipo_basico() != null) {
                 variavelTipo = escopoAtual.getTipo(ctx.tipo().tipo_estendido().tipo_basico_ident().tipo_basico().getText());
 
-            // tipo IDENT (estendido)
+                // tipo IDENT (estendido)
             } else {
                 variavelTipo = TipoLA.TIPOESTENDIDO;
                 String tipoIdent = ctx.tipo().tipo_estendido().tipo_basico_ident().IDENT().getText();
@@ -182,31 +181,29 @@ public class VisitorString extends GramaticaBaseVisitor<Void> {
             }
 
             if (!jaDeclarado) {
-                escopoAtual.adicionar(ictx.getText(), variavelTipo, TipoETS.VARIAVEL, escopoRegistro, ponteiro);
+                escopoAtual.adicionar(AnalisadorSemanticoLib.getNomeVariavel(ictx), variavelTipo, TipoETS.VARIAVEL, escopoRegistro, ponteiro);
             }
         }
 
         return super.visitVariavel(ctx);
 
     }
-    
+
     @Override
     public Void visitCmdLeia(GramaticaParser.CmdLeiaContext ctx) {
-        
-        boolean erro = true;
-
-        TabelaSimbolos escopoAtual = escopos.obterEscopoAtual();
 
         for (GramaticaParser.IdentificadorContext ictx : ctx.identificador()) {
-            
+
+            boolean erro = true;
+
             for (TabelaSimbolos ts : escopos.percorrerEscoposAninhados()) {
-                if (ts.existe(AnalisadorSemanticoLib.getNomeVariavel(ictx.getText()))) {
+                if (ts.existe(AnalisadorSemanticoLib.getNomeVariavel(ictx))) {
                     erro = false;
                 }
             }
-            
+
             if (erro) {
-                String mensagem = String.format("Linha %d: identificador %s nao declarado LEIA",
+                String mensagem = String.format("Linha %d: identificador %s nao declarado",
                         ictx.getStart().getLine(),
                         ictx.getText());
                 AnalisadorSemanticoLib.adicionarErroSemantico(mensagem);
@@ -217,56 +214,13 @@ public class VisitorString extends GramaticaBaseVisitor<Void> {
     }
 
     @Override
-    public Void visitCmdEscreva(GramaticaParser.CmdEscrevaContext ctx) {
-
-        TabelaSimbolos escopoAtual;
-        TabelaSimbolos escopoRegistro = null;
-        String nomeRegistro = null;
-        String nomeVariavel;
-        boolean registroExiste = true;
-
-        for (GramaticaParser.ExpressaoContext ectx : ctx.expressao()) {
-            //não é cadeia nem função
-            if (!ectx.getText().contains("(") && !ectx.getText().contains("\"")) {
-
-                escopoAtual = escopos.obterEscopoAtual();
-
-                nomeVariavel = ectx.getText();
-
-                //é registro
-                if (ectx.getText().contains(".")) { 
-                    nomeRegistro = AnalisadorSemanticoLib.getNomeRegistro(ectx.getText());
-                    nomeVariavel = AnalisadorSemanticoLib.getNomeVariavel(ectx.getText());
-                    registroExiste = escopoAtual.existe(nomeRegistro);
-                    if (registroExiste) {
-                        escopoRegistro = escopoAtual.getSubTabela(nomeRegistro);
-                    }
-                    if (escopoRegistro != null) {
-                        escopoAtual = escopoRegistro;
-                    }
-                }
-                if (!nomeVariavel.contains("+") && !nomeVariavel.contains("*") && !nomeVariavel.contains("colisao")) {
-                    if (!escopoAtual.existe(nomeVariavel) || (nomeRegistro != null && !registroExiste)) {
-                        String mensagem = String.format("Linha %d: identificador %s nao declarado ESCREVA",
-                                ectx.getStart().getLine(),
-                                ectx.getText());
-                        AnalisadorSemanticoLib.adicionarErroSemantico(mensagem);
-                    }
-                }
-            }
-        }
-
-        return super.visitCmdEscreva(ctx);
-    }
-
-    @Override
     public Void visitParcela_nao_unario(GramaticaParser.Parcela_nao_unarioContext ctx) {
 
         TabelaSimbolos escopoAtual = escopos.obterEscopoAtual();
 
         if (ctx.identificador() != null) {
             if (!escopoAtual.existe(AnalisadorSemanticoLib.getNomeVariavel(ctx.identificador().getText()))) {
-                String mensagem = String.format("Linha %d: identificador %s nao declarado NAO UNARIO",
+                String mensagem = String.format("Linha %d: identificador %s nao declarado",
                         ctx.identificador().getStart().getLine(),
                         ctx.identificador().getText());
                 AnalisadorSemanticoLib.adicionarErroSemantico(mensagem);
@@ -284,9 +238,11 @@ public class VisitorString extends GramaticaBaseVisitor<Void> {
 
         //parcela unaria é identificador
         if (ctx.identificador() != null) {
+
+            String nomeRegistro = AnalisadorSemanticoLib.getNomeRegistro(ctx.identificador());
+            String nomeVariavel = AnalisadorSemanticoLib.getNomeVariavel(ctx.identificador());
+
             for (TabelaSimbolos ts : escopos.percorrerEscoposAninhados()) {
-                String nomeRegistro = AnalisadorSemanticoLib.getNomeRegistro(ctx.identificador().getText());
-                String nomeVariavel = AnalisadorSemanticoLib.getNomeVariavel(ctx.identificador().getText());
 
                 //não é registro
                 if (nomeRegistro == null) {
@@ -306,10 +262,18 @@ public class VisitorString extends GramaticaBaseVisitor<Void> {
 
             //dispara erro de identificador não declarado
             if (erro) {
-                String mensagem = String.format("Linha %d: identificador %s nao declarado UNARIO",
-                        ctx.identificador().getStart().getLine(),
-                        ctx.identificador().getText());
-                AnalisadorSemanticoLib.adicionarErroSemantico(mensagem);
+                if (nomeRegistro != null) {
+                    String mensagem = String.format("Linha %d: identificador %s nao declarado",
+                            ctx.identificador().getStart().getLine(),
+                            nomeRegistro + "." + nomeVariavel);
+                    AnalisadorSemanticoLib.adicionarErroSemantico(mensagem);
+                }else{
+                    String mensagem = String.format("Linha %d: identificador %s nao declarado",
+                            ctx.identificador().getStart().getLine(),
+                            nomeVariavel);
+                    AnalisadorSemanticoLib.adicionarErroSemantico(mensagem);
+                }
+
             }
 
             //chamada de função ou procedimento
@@ -326,7 +290,7 @@ public class VisitorString extends GramaticaBaseVisitor<Void> {
 
                     //erro de quantidade de parametros diferente
                     if (tiposParametros.size() != ctx.expressao().size()) {
-                        String mensagem = String.format("Linha %d: incompatibilidade de parametros na chamada de %s QTD DIFERENTE",
+                        String mensagem = String.format("Linha %d: incompatibilidade de parametros na chamada de %s",
                                 ctx.getStart().getLine(), ctx.IDENT().getText());
                         AnalisadorSemanticoLib.adicionarErroSemantico(mensagem);
 
@@ -356,18 +320,23 @@ public class VisitorString extends GramaticaBaseVisitor<Void> {
     public Void visitCmdAtribuicao(GramaticaParser.CmdAtribuicaoContext ctx) {
 
         TipoLA tipoIdentificador = verificadorTipo.verificaTipo(ctx.identificador());
-        AnalisadorSemanticoLib.adicionarErroSemantico("tipo identificador: " + tipoIdentificador.toString());
         TipoLA tipoExpressao = verificadorTipo.verificaTipo(ctx.expressao());
-        
-        boolean condicao;
 
-        condicao = (
-                tipoIdentificador == TipoLA.INVALIDO || tipoExpressao == TipoLA.INVALIDO) //identificador e expressao invalidos
+        boolean condicao;
+        boolean identificadorInvalido = tipoIdentificador == TipoLA.INVALIDO;
+        
+        if(identificadorInvalido){
+            String mensagem = String.format("Linha %d: identificador %s nao declarado",
+                        ctx.getStart().getLine(), ctx.identificador().getText());
+            AnalisadorSemanticoLib.adicionarErroSemantico(mensagem);
+        }
+        
+        condicao = (tipoExpressao == TipoLA.INVALIDO) //identificador e expressao invalidos
                 || (tipoIdentificador != tipoExpressao //tipos diferentes
                 && !(tipoIdentificador == TipoLA.REAL && tipoExpressao == TipoLA.INTEIRO) //identificador real e expressao inteira
                 );
 
-        if (condicao) {
+        if (!identificadorInvalido && condicao) {
             String mensagem;
             if (ctx.simbolo == null) {
                 mensagem = String.format("Linha %d: atribuicao nao compativel para %s",
