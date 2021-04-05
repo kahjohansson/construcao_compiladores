@@ -4,6 +4,9 @@ Autores:
 - Camila Manara Ribeiro
 - Karina Mayumi Johansson
 
+## Dependências
+- [ANTLR4](https://www.antlr.org/download.html)
+
 ## Como compilar o projeto
 
 Clone o projeto. Utilizando a IDE Netbeans, abra o projeto `analisador-sintatico` e construa o projeto. Será gerado o arquivo executável `target/analisador-sintatico-1.0-SNAPSHOT-jar-with-dependencies.jar`.
