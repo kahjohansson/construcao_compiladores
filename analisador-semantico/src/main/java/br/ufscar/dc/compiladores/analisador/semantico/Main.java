@@ -54,7 +54,9 @@ public class Main {
     }
     
 
-    public static void analiseSintatica(String args[], PrintWriter pw) throws IOException {
+    public static boolean analiseSintatica(String args[], PrintWriter pw) throws IOException {
+        
+        boolean erro = false;
 
         CharStream cs = CharStreams.fromFileName(args[0]);
         GramaticaLexer lexer = new GramaticaLexer(cs);
@@ -68,7 +70,10 @@ public class Main {
             parser.programa(); // tenta fazer a análise do programa
         } catch (Exception e) {
             pw.println(e.getMessage()); // recupera a mensagem de erro causada pela exceção do tratador de erros
+            erro = true;
         }
+        
+        return erro;
     }
 
     public static boolean analiseSemantica(String args[], PrintWriter pw) throws IOException {
@@ -100,23 +105,23 @@ public class Main {
 
         try (PrintWriter pw = new PrintWriter(new File(args[1]))) { // instância do escritor do arquivo de log
 
-            boolean error;
-            error = analiseLexica(args, pw);
+            boolean erroLexico = false, erroSintatico=false, erroSemantico=false;
+            
+            erroLexico = analiseLexica(args, pw);
 
-            if (!error) { // se não houve erro léxico, é feita a análise sintática
-                analiseSintatica(args, pw);
+            if (!erroLexico) { // se não houve erro léxico, é feita a análise sintática
+                erroSintatico = analiseSintatica(args, pw);
             }
             
-            error = analiseSemantica(args, pw);
-            if (error){
+            if(!erroLexico && !erroSintatico){ // se não houve erro léxico ou sintático, é feita a análise sintática
+                erroSemantico = analiseSemantica(args, pw);
+            }
+            
+            if (erroLexico || erroSintatico || erroSemantico){ //se houve algum erro, mensagem final do log de erros
                 pw.println("Fim da compilacao");
-            }
-            
-            if(!error){
+            }else{ //senão é gerado código em C
                 geracaoCodigoC(args, pw);
             }
-
-             // mensagem final do arquivo de log de análise léxica e sintática
 
         } catch (Exception e) {
             e.printStackTrace();
