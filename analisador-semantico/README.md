@@ -6,6 +6,7 @@ Autores:
 
 ## Dependências
 - [ANTLR4](https://www.antlr.org/download.html)
+- [Maven](https://maven.apache.org/download.cgi)
 
 ## Como compilar o projeto
 
