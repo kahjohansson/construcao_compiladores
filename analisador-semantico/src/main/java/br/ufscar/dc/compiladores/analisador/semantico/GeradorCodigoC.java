@@ -152,30 +152,10 @@ public class GeradorCodigoC extends GramaticaBaseVisitor<Void> {
         String codTipoExp;
         String nomeVariaveis = "";
 
-        if (ctx.expLista.isEmpty()) { //só possui uma expressão como argumento
-
+        //só possui uma expressão como argumento
+        if (ctx.expLista.isEmpty()) { 
             escreva(ctx.exp1);
-
-//        } else if (ctx.expLista.size() == 1) {
-//
-//            saida.append("printf(\"");
-//
-//            TipoLA tipoSegundaExpressao = verificadorTipo.verificaTipo(ctx.expressao(1));
-//
-//            if ((tipoLaExp == TipoLA.INTEIRO || tipoLaExp == TipoLA.REAL) && (tipoSegundaExpressao == TipoLA.LITERAL)) {
-//                codTipoExp = geradorLib.getCodigoTipo(tipoLaExp);
-//                saida.append("%" + codTipoExp + "\", " + ctx.exp1.getText() + ");\n");
-//                saida.append("printf(" + ctx.expressao(1).getText() + ");\n");
-//            } else {
-//                saida.append(ctx.exp1.getText().replace("\"", ""));
-//                for (GramaticaParser.ExpressaoContext ectx : ctx.expLista) {
-//                    tipoLaExp = verificadorTipo.verificaTipo(ectx);
-//                    codTipoExp = geradorLib.getCodigoTipo(tipoLaExp);
-//                    nomeVariaveis += " , " + ectx.getText();
-//                    saida.append(" %" + codTipoExp + " \"");
-//                }
-//                saida.append(nomeVariaveis + ");\n");
-//            }
+        //possui mais de um argumento
         } else {
             for (GramaticaParser.ExpressaoContext ectx : ctx.expressao()) {
                 escreva(ectx);
