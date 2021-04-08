@@ -5,7 +5,7 @@ from GramaticaParser import GramaticaParser
 from GramaticaListener import GramaticaListener
 
 from AnalisadorSemantico import AnalisadorSemantico
-from AnalisadorSemanticoLib import getErros
+from AnalisadorSemanticoLib import AnalisadorSemanticoLib
 
 def main(argv):
     istream = FileStream(argv[1])
@@ -18,7 +18,7 @@ def main(argv):
     semantic_analyser = AnalisadorSemantico()
     semantic_analyser.visitCasamento(tree)
 
-    erros = getErros()
+    erros = semantic_analyser.lib.getErros()
     for erro in erros:
         print(erro)
 

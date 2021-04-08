@@ -1,8 +1,11 @@
 from GramaticaVisitor import GramaticaVisitor
 from GramaticaParser import GramaticaParser
-from AnalisadorSemanticoLib import *
+from AnalisadorSemanticoLib import AnalisadorSemanticoLib
 
 class AnalisadorSemantico(GramaticaVisitor):
+
+    def __init__(self):
+        self.lib = AnalisadorSemanticoLib()
 
     def visitLista_convidados(self, ctx:GramaticaParser.Lista_convidadosContext):
         #retorna lado e quantidade de convidados da lista
@@ -23,12 +26,12 @@ class AnalisadorSemantico(GramaticaVisitor):
                 quantidadeAmbos = quantidade
 
         if quantidadeNoiva > quantidadeNoivo*1.2:
-            adicionaErro("Erro: Lista noiva mais do que 20% maior que a da noiva")
+            self.lib.adicionaErro("Erro: Lista de convidados da noiva mais do que 20% maior que a da noiva")
         elif quantidadeNoivo > quantidadeNoiva*1.2:
-            adicionaErro("Erro: Lista noivo mais do que 20% maior que a da noivo")
+            self.lib.adicionaErro("Erro: Lista de convidados do noivo mais do que 20% maior que a da noivo")
 
         quantidadeConvidados = quantidadeNoiva + quantidadeNoivo + quantidadeAmbos
-        setQuantidadeConvidados(quantidadeConvidados)
+        self.lib.setQuantidadeConvidados(quantidadeConvidados)
 
 
     def visitLista_padrinhos(self, ctx:GramaticaParser.Lista_padrinhosContext):
@@ -44,7 +47,7 @@ class AnalisadorSemantico(GramaticaVisitor):
         qtdPadrinhos = self.visitLista_padrinhos(ctx.lista_padrinhos())
         
         if qtdMadrinhas != qtdPadrinhos:
-            adicionaErro("Erro: Quantidade de madrinhas e padrinhos diferentes entre si")
+            self.lib.adicionaErro("Erro: Quantidade de madrinhas e padrinhos diferentes entre si")
 
 
     def visitServico(self, ctx:GramaticaParser.ServicoContext):
@@ -53,23 +56,19 @@ class AnalisadorSemantico(GramaticaVisitor):
 
     def visitServicos(self, ctx:GramaticaParser.ServicosContext):
         valorTotal = 0
-        quantidadeConvidados = getQuantidadeConvidados()
-        print(f'quantidade de convidados: {quantidadeConvidados}')
+        quantidadeConvidados = self.lib.getQuantidadeConvidados()
         for sctx in ctx.servico():
             valorServico, modalidade = self.visitServico(sctx)
-            print(f'modalidade: {modalidade}')
             if modalidade == 'TOTAL':
                 multiplicador = 1
             else:
                 multiplicador = quantidadeConvidados
 
             valorTotal += int(valorServico) * multiplicador
-            print(f'valor do multiplicador: {multiplicador}')
         
-        setValorCusto(valorTotal)
+        self.lib.setValorCusto(valorTotal)
 
 
     def visitValor_disponivel(self, ctx:GramaticaParser.Valor_disponivelContext):
-        print(f'valor total do casamento: {getValorCusto()}')
-        if int(ctx.valor().getText()) < getValorCusto():
-           adicionaErro("Erro: Custo do casamento maior do que o valor disponível")
+        if int(ctx.valor().getText()) < self.lib.getValorCusto():
+           self.lib.adicionaErro("Erro: Custo do casamento maior do que o valor disponível")

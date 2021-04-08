@@ -1,26 +1,28 @@
-erros = []
-quantidadeConvidados = 20
-valorCusto = 40
+class AnalisadorSemanticoLib:
 
-def getErros():
-    return erros
+    def __init__(self):
+        self.erros = []
 
-
-def adicionaErro(erro):
-    erros.append(erro)
+    def getErros(self):
+        return self.erros
 
 
-def setQuantidadeConvidados(quantidade):
-    quantidadeConvidados = quantidade
+    def adicionaErro(self, erro):
+        self.erros.append(erro)
 
 
-def getQuantidadeConvidados():
-    return quantidadeConvidados
+    def setQuantidadeConvidados(self, quantidade):
+        self.quantidadeConvidados = quantidade
 
 
-def setValorCusto(valor):
-    valorCusto = valor
+    def getQuantidadeConvidados(self):
+        return self.quantidadeConvidados
 
 
-def getValorCusto():
-    return valorCusto
+    def setValorCusto(self, valor):
+        self.valorCusto = valor
+
+
+    def getValorCusto(self):
+        return self.valorCusto
+        
