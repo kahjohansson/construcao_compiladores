@@ -1,6 +1,6 @@
 CASAMENTO NOME NOIVA "Pamela Morgan Beesley" NOME NOIVO "James Halpert"
 
-CONVIDADOS AMBOS "Michael Scott", "Dwight Schrute", "Andy Bernand", 
+CONVIDADOS AMBOS "Michael Scott", "Dwight Schrute", "Andy Bernard", 
     "Kevin Malone", "Oscar Martinez", "Toby Flenderson",
     "Stanley Hudson", "Robert Vance", "Creed Bratton",
     "Erin Hannon", "Meredith Palmer", "Angela Martin", "Phyllis Vance",
@@ -10,13 +10,12 @@ CONVIDADOS NOIVA "Helene Beesly", "William Beesly", "Sylvia Beesley", "Anna Camp
 CONVIDADOS NOIVO "Gerald Halpert", "Betsy Halpert", "Thomas Halpert", "Peter Halpert"
 
 MADRINHAS "Anna Camp", "Isabel"
-PADRINHOS "Thomas Halpert", "Peter Halpert", "Dwight"
+PADRINHOS "Thomas Halpert", "Peter Halpert"
 
 SERVICO "banda casamento" TOTAL 2000
 SERVICO "fotografo" TOTAL 3000
 SERVICO "banda festa" TOTAL 5000
 SERVICO "buffet" POR PESSOA 200 
 SERVICO "locacao" TOTAL 3000
-SERVICO "outro" TOTAL 30000
 
 VALOR DISPONIVEL 35000
