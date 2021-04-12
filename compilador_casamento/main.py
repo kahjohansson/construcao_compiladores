@@ -21,8 +21,10 @@ def main(argv):
     semantic_analyser.visitCasamento(tree)
     # erros semânticos
     erros = semantic_analyser.lib.getErros()
+    output_file = open(argv[2], 'w+')
     for erro in erros:
-        print(erro)
+        output_file.write(erro + '\n')
+    output_file.close()
 
     #geração de código
     if len(erros) == 0:
