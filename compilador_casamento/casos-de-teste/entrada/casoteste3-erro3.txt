@@ -1,0 +1,18 @@
+CASAMENTO 
+NOME NOIVA "Gabriela Montez"
+NOME NOIVO "Troy Bolton"
+
+CONVIDADOS AMBOS "Sharpey Evans", "Taylor Mckessie", "Chad Danforth", "Zeke Baylor", "Ryan Evans", "Kelsi Nielsen", "Martha Cox", "Jack Bolton", "Sra Bolton", "Sra Montez"
+
+MADRINHAS "Sharpay Evans", "Taylor Mckessie"
+PADRINHOS "Chad Danforth", "Zeke Baylor"
+
+SERVICO "Banda" TOTAL 3500
+SERVICO "Fotografo" TOTAL 3000
+SERVICO "Vestido noiva" TOTAL 5800
+SERVICO "Maquiagem e penteado noiva" TOTAL 700
+SERVICO "Terno noivo" TOTAL 250
+SERVICO "Buffet" POR PESSOA 250
+SERVICO "Locacao do salao" TOTAL 8000
+
+VALOR DISPONIVEL 20000

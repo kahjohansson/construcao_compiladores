@@ -1,0 +1,2 @@
+Erro: Lista de convidados da noiva mais do que 20% maior que a da noiva
+Erro: Quantidade de madrinhas e padrinhos diferentes entre si

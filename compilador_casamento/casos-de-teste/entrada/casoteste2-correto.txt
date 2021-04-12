@@ -1,0 +1,21 @@
+CASAMENTO 
+NOME NOIVA "Monica Geller"
+NOME NOIVO "Chandler Bing"
+
+CONVIDADOS AMBOS "Janice", "Mike Hannigan", "Gunther", "Ben Geller", "Emma Geller", "Ursula Buffat", "Carol Willick", "Susan Bunch", "Rachel Green", "Phoebe Buffay", "Joey Tribbiani", "Ross Geller"
+CONVIDADOS NOIVA "Jack Geller", "Judy Geller"
+CONVIDADOS NOIVO "Nora Tyler Bing", "Charles Bing"
+
+MADRINHAS "Rachel Green", "Phoebe Buffay"
+PADRINHOS "Joey Tribbiani", "Ross Geller"
+
+SERVICO "DJ" TOTAL 1700
+SERVICO "Fotografo" TOTAL 3500
+SERVICO "Vestido noiva" TOTAL 5000
+SERVICO "Maquiagem e penteado noiva" TOTAL 300
+SERVICO "Terno noivo" TOTAL 250
+SERVICO "Buffet" POR PESSOA 200
+SERVICO "Lembrancinha" POR PESSOA 70
+SERVICO "Locacao do salao" TOTAL 3000
+
+VALOR DISPONIVEL 42000
