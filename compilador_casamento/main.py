@@ -6,6 +6,8 @@ from GramaticaListener import GramaticaListener
 
 from AnalisadorSemantico import AnalisadorSemantico
 from AnalisadorSemanticoLib import AnalisadorSemanticoLib
+from GeradorHtml import GeradorHtml
+
 
 def main(argv):
     istream = FileStream(argv[1])
@@ -17,10 +19,20 @@ def main(argv):
     #análise semântica
     semantic_analyser = AnalisadorSemantico()
     semantic_analyser.visitCasamento(tree)
-
+    # erros semânticos
     erros = semantic_analyser.lib.getErros()
     for erro in erros:
         print(erro)
+
+    #geração de código
+    if len(erros) == 0:
+        code_generator = GeradorHtml()
+        code_generator.visitCasamento(tree)
+        output_file = open(argv[2], 'w+')
+        data = code_generator.saida
+        for line in data:
+            output_file.write(line)
+        output_file.close()
 
 if __name__ == '__main__':
     main(sys.argv)
