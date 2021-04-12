@@ -35,7 +35,7 @@ class GeradorHtml(GramaticaVisitor):
         self.saida.append("</div>\n")
         # div do corpo
         self.saida.append("<div class='container pb-5'>\n")
-        self.saida.append("<h2>Lista de convidados</h2>\n")
+        self.saida.append("<h2>Convidados</h2>\n")
         self.visitListas_convidados(ctx.listas_convidados())
         self.saida.append("<hr class='my-4'>\n")
         self.saida.append("<h2>Madrinhas</h2>\n")
