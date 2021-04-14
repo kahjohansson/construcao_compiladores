@@ -19,3 +19,7 @@ O trabalho 2 está disponível em [`linguagem-la/analisador-sintatico`](linguage
 ### Trabalho 3 - Analisador Semântico e Gerador de Código em C
 
 O trabalho 3 está disponível em [`linguagem-la/analisador-semantico`](linguagem-la/analisador-semantico).
+
+### Trabalho 4 - Compilador de lista de detalhes de casamento
+
+O trabalho 4 está disponível em [`lista-casamento`](lista-casamento).
