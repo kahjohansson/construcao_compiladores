@@ -10,6 +10,13 @@ from GeradorHtml import GeradorHtml
 
 
 def main(argv):
+    '''
+    Realiza análise léxica, sintática e semântica segundo a gramática Gramatica.
+    
+    As análises léxica e sintática são geradas automaticamente dada a gramática.
+    A análise semântica foi implementada na classe AnalisadorSemantico e caso houverem 
+    erros, os imprime no arquivo de saída.
+    '''
     istream = FileStream(argv[1])
     lexer = GramaticaLexer(istream)
     stream = CommonTokenStream(lexer)
@@ -38,3 +45,4 @@ def main(argv):
 
 if __name__ == '__main__':
     main(sys.argv)
+    
