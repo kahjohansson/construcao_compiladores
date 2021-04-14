@@ -10,12 +10,12 @@ Autores:
 
 ### Trabalho 1 - Analisador Léxico
 
-O trabalho 1 está disponível em [`analisador-lexico`](linguagem-la/analisador-lexico).
+O trabalho 1 está disponível em [`linguagem-la/analisador-lexico`](linguagem-la/analisador-lexico).
 
 ### Trabalho 2 - Analisador Léxico e Sintático
 
-O trabalho 2 está disponível em [`analisador-sintatico`](linguagem-la/analisador-sintatico).
+O trabalho 2 está disponível em [`linguagem-la/analisador-sintatico`](linguagem-la/analisador-sintatico).
 
 ### Trabalho 3 - Analisador Semântico e Gerador de Código em C
 
-O trabalho 3 está disponível em [`analisador-semantico`](linguagem-la/analisador-semantico).
+O trabalho 3 está disponível em [`linguagem-la/analisador-semantico`](linguagem-la/analisador-semantico).
