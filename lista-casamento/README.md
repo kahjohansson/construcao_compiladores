@@ -1,8 +1,16 @@
 # Compilador de lista de detalhes de casamento
 
-Compilador de lista de lista de detalhes de casamento e gerador de página HTML
+Compilador de lista de lista de detalhes de casamento e gerador de página HTML.
 
-Implementado na linguagem Python utilizando a biblioteca ANTLR4
+A lista contém convidados, padrinhos, valor disponível e serviços contratados e seus valores.
+
+O compilador realiza análise léxica e sintática seguindo a [gramática](Gramatica.g4) e a análise semântica segue 3 regras:
+- O número de convidados de um lado não pode ser 20% maior que do outro;
+- O número de padrinhos do sexo masculino e feminino têm que ser igual e têm que ser par;
+- O custo total da festa tem que ser menor que o valor disponível.
+
+
+Implementado na linguagem Python utilizando a biblioteca ANTLR4.
 
 ## Dependências
 - [ANTLR4](https://www.antlr.org/download.html) 
