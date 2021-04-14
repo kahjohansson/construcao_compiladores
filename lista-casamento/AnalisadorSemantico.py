@@ -38,9 +38,9 @@ class AnalisadorSemantico(GramaticaVisitor):
                 quantidadeAmbos = quantidade
 
         if quantidadeNoiva > quantidadeNoivo*1.2:
-            self.lib.adicionaErro("Erro: Lista de convidados da noiva mais do que 20% maior que a da noiva")
+            self.lib.adicionaErro("Erro: Lista de convidados da noiva maior que a do noivo, em mais de 20%")
         elif quantidadeNoivo > quantidadeNoiva*1.2:
-            self.lib.adicionaErro("Erro: Lista de convidados do noivo mais do que 20% maior que a da noivo")
+            self.lib.adicionaErro("Erro: Lista de convidados do noivo maior que a da noiva, em mais de 20%")
 
         quantidadeConvidados = quantidadeNoiva + quantidadeNoivo + quantidadeAmbos
         self.lib.setQuantidadeConvidados(quantidadeConvidados)
