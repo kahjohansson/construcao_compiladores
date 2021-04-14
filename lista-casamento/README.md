@@ -5,7 +5,8 @@ Compilador de lista de lista de detalhes de casamento e gerador de página HTML
 Implementado na linguagem Python utilizando a biblioteca ANTLR4
 
 ## Dependências
-- [ANTLR4](https://www.antlr.org/download.html) [(Instalação do ANTLR4)](https://github.com/antlr/antlr4/blob/master/doc/getting-started.md)
+- [ANTLR4](https://www.antlr.org/download.html) 
+  - [(Tutorial de instalação do ANTLR4)](https://github.com/antlr/antlr4/blob/master/doc/getting-started.md)
 
 ### Como compilar a gramática
 
